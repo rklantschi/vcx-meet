@@ -347,7 +347,7 @@ export function Canvas({
               {/* Thumbnail strip - width constrained to leave room for icons top-right, swipeable */}
               <div 
                 ref={thumbnailStripRef}
-                className="h-16 flex-shrink-0 flex gap-1 overflow-x-auto w-[calc(100%-5rem)] scrollbar-hide"
+                className="h-16 flex-shrink-0 flex gap-1 overflow-x-hidden w-[calc(100%-5rem)]"
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
               >
