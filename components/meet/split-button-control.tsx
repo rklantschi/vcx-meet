@@ -16,6 +16,7 @@ interface SplitButtonControlProps {
   type: 'mic' | 'camera' | 'speaker'
   isOn?: boolean
   devices: MediaDevice[]
+  selectedDeviceId?: string
   onToggle?: () => void
   onSwitchDevice: (deviceId: string) => void
   label?: string
@@ -25,6 +26,7 @@ export function SplitButtonControl({
   type,
   isOn = true,
   devices,
+  selectedDeviceId,
   onToggle,
   onSwitchDevice,
   label = type === 'mic' ? 'Microphone' : type === 'camera' ? 'Camera' : 'Speaker',
@@ -77,8 +79,12 @@ export function SplitButtonControl({
               <DropdownMenuItem
                 key={device.id}
                 onClick={() => onSwitchDevice(device.id)}
+                className={selectedDeviceId === device.id ? 'bg-accent' : ''}
               >
                 {device.label}
+                {selectedDeviceId === device.id && (
+                  <span className="ml-auto text-xs text-accent-foreground">✓</span>
+                )}
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>

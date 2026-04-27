@@ -315,6 +315,7 @@ export function PreJoin({
               type="mic"
               isOn={micEnabled}
               devices={availableDevices.mics}
+              selectedDeviceId={micId}
               onToggle={() => setMicEnabled(!micEnabled)}
               onSwitchDevice={setMicId}
               label={t.microphone || 'Microphone'}
@@ -326,6 +327,7 @@ export function PreJoin({
               type="camera"
               isOn={cameraEnabled}
               devices={availableDevices.cameras}
+              selectedDeviceId={cameraId}
               onToggle={() => setCameraEnabled(!cameraEnabled)}
               onSwitchDevice={setCameraId}
               label={t.camera || 'Camera'}
@@ -336,6 +338,7 @@ export function PreJoin({
             <SplitButtonControl
               type="speaker"
               devices={availableDevices.speakers}
+              selectedDeviceId={speakerId}
               onSwitchDevice={setSpeakerId}
               label={t.speaker || 'Speaker'}
             />
@@ -424,6 +427,7 @@ export function PreJoin({
                   type="mic"
                   isOn={micEnabled}
                   devices={availableDevices.mics}
+                  selectedDeviceId={micId}
                   onToggle={() => setMicEnabled(!micEnabled)}
                   onSwitchDevice={setMicId}
                   label={t.microphone || 'Microphone'}
@@ -442,6 +446,7 @@ export function PreJoin({
                   type="camera"
                   isOn={cameraEnabled}
                   devices={availableDevices.cameras}
+                  selectedDeviceId={cameraId}
                   onToggle={() => setCameraEnabled(!cameraEnabled)}
                   onSwitchDevice={setCameraId}
                   label={t.camera || 'Camera'}
@@ -459,6 +464,7 @@ export function PreJoin({
                 <SplitButtonControl
                   type="speaker"
                   devices={availableDevices.speakers}
+                  selectedDeviceId={speakerId}
                   onSwitchDevice={setSpeakerId}
                   label={t.speaker || 'Speaker'}
                 />
