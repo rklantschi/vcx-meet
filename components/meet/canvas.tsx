@@ -125,9 +125,14 @@ export function Canvas({
         </div>
       )}
 
-      {/* Recording + layout toggle - stacked vertically */}
-      <div className="absolute top-4 right-4 flex flex-col gap-2 z-50">
-        {/* Layout toggle (only show for 3+ participants) */}
+      {/* Recording + layout toggle — single row, top-right */}
+      <div className="absolute top-3 right-3 flex items-center gap-2 z-50">
+        {recordingActive && (
+          <div className="flex items-center gap-1.5 bg-red-600/90 px-2 py-1 rounded-full animate-pulse">
+            <Circle className="w-2.5 h-2.5 text-red-200 fill-red-200" />
+            <span className="hidden sm:inline text-xs text-white font-medium">Rec</span>
+          </div>
+        )}
         {participantCount >= 3 && !remoteScreenShare && (
           <button
             onClick={() => {
@@ -141,27 +146,21 @@ export function Canvas({
                 setPinnedParticipantId(null)
               }
             }}
-            className="flex items-center gap-1.5 bg-black/60 hover:bg-black/80 px-2.5 py-1.5 rounded-full transition-colors"
+            className="flex items-center gap-1.5 bg-black/60 hover:bg-black/80 px-2 py-1 rounded-full transition-colors"
             title={layoutMode === 'grid' ? 'Switch to spotlight view' : 'Switch to grid view'}
           >
             {layoutMode === 'grid' ? (
               <>
                 <Maximize2 className="w-3.5 h-3.5 text-white" />
-                <span className="text-xs text-white">Spotlight</span>
+                <span className="hidden sm:inline text-xs text-white">Spotlight</span>
               </>
             ) : (
               <>
                 <Grid className="w-3.5 h-3.5 text-white" />
-                <span className="text-xs text-white">Grid</span>
+                <span className="hidden sm:inline text-xs text-white">Grid</span>
               </>
             )}
           </button>
-        )}
-        {recordingActive && (
-          <div className="flex items-center gap-1.5 bg-red-600/90 px-2.5 py-1.5 rounded-full animate-pulse">
-            <Circle className="w-2.5 h-2.5 text-red-200 fill-red-200" />
-            <span className="text-xs text-white font-medium">Rec</span>
-          </div>
         )}
       </div>
 
@@ -330,8 +329,8 @@ export function Canvas({
           {/* Mobile portrait: thumbnails on top, spotlight below */}
           {isMobile && !isLandscape ? (
             <div className="w-full h-full flex flex-col gap-1 p-1">
-              {/* Thumbnail strip - horizontal scrollable at top */}
-              <div className="h-16 flex-shrink-0 flex gap-1 overflow-x-auto">
+              {/* Thumbnail strip - horizontal scrollable at top, right padding to clear indicators */}
+              <div className="h-16 flex-shrink-0 flex gap-1 overflow-x-auto pr-20">
                 {thumbnailParticipants.map((participant) => (
                   <div key={participant.id} className="h-full aspect-video flex-shrink-0">
                     {isAudioOnly || !participant.hasVideoTrack ? (
@@ -396,8 +395,8 @@ export function Canvas({
                   />
                 )}
               </div>
-              {/* Thumbnail strip - vertical scrollable on side */}
-              <div className="w-24 flex-shrink-0 flex flex-col gap-1 overflow-y-auto">
+              {/* Thumbnail strip - vertical scrollable on side, padded top to clear the indicator row */}
+              <div className="w-24 flex-shrink-0 flex flex-col gap-1 overflow-y-auto pt-9">
                 {thumbnailParticipants.map((participant) => (
                   <div key={participant.id} className="w-full aspect-video flex-shrink-0">
                     {isAudioOnly || !participant.hasVideoTrack ? (
