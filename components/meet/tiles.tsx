@@ -12,17 +12,18 @@ interface VideoTileProps {
   isLocal?: boolean
   allowRotate?: boolean
   isPinned?: boolean
+  isSpeaking?: boolean
   onClick?: () => void
 }
 
-export function VideoTile({ participant, isLocal = false, allowRotate = false, isPinned = false, onClick }: VideoTileProps) {
+export function VideoTile({ participant, isLocal = false, allowRotate = false, isPinned = false, isSpeaking = false, onClick }: VideoTileProps) {
   const [isPortrait, setIsPortrait] = useState(false)
 
   return (
     <div
       className={`relative bg-black rounded-lg overflow-hidden group animate-in fade-in scale-in duration-300 transition-all cursor-pointer ${
         allowRotate && isPortrait ? 'w-auto h-full aspect-[9/16] mx-auto' : 'w-full h-full'
-      } ${isPinned ? 'ring-2 ring-primary' : ''}`}
+      } ${isSpeaking ? 'ring-2 ring-emerald-400' : ''} ${isPinned ? 'ring-2 ring-primary' : ''}`}
       onClick={onClick}
     >
       {/* Video placeholder */}
@@ -101,17 +102,18 @@ interface AudioTileProps {
   participant: ParticipantTile
   allowRotate?: boolean
   isPinned?: boolean
+  isSpeaking?: boolean
   onClick?: () => void
 }
 
-export function AudioTile({ participant, allowRotate = false, isPinned = false, onClick }: AudioTileProps) {
+export function AudioTile({ participant, allowRotate = false, isPinned = false, isSpeaking = false, onClick }: AudioTileProps) {
   const [isPortrait, setIsPortrait] = useState(false)
 
   return (
     <div
       className={`relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg overflow-hidden flex flex-col items-center justify-center gap-3 p-4 animate-in fade-in scale-in duration-300 transition-all group border cursor-pointer ${
         allowRotate && isPortrait ? 'w-auto h-full aspect-[9/16] mx-auto' : 'w-full h-full'
-      } ${isPinned ? 'border-primary ring-2 ring-primary' : 'border-slate-700/50'}`}
+      } ${isSpeaking ? 'border-emerald-400 ring-2 ring-emerald-400' : 'border-slate-700/50'} ${isPinned ? 'border-primary ring-2 ring-primary' : ''}`}
       onClick={onClick}
     >
       {/* Audio-only badge */}

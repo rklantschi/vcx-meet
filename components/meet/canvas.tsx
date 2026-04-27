@@ -250,9 +250,9 @@ export function Canvas({
                 {participants.map((participant) => (
                   <div key={participant.id} className="w-full h-full min-h-0">
                     {isAudioOnly || !participant.hasVideoTrack ? (
-                      <AudioTile participant={participant} onClick={() => handleTileClick(participant.id)} />
+                      <AudioTile participant={participant} isSpeaking={participant.isSpeaking} onClick={() => handleTileClick(participant.id)} />
                     ) : (
-                      <VideoTile participant={participant} onClick={() => handleTileClick(participant.id)} />
+                      <VideoTile participant={participant} isSpeaking={participant.isSpeaking} onClick={() => handleTileClick(participant.id)} />
                     )}
                   </div>
                 ))}
@@ -287,7 +287,8 @@ export function Canvas({
                   {isAudioOnly || !participant.hasVideoTrack ? (
                     <AudioTile 
                       participant={participant} 
-                      allowRotate={!isMobile} 
+                      allowRotate={!isMobile}
+                      isSpeaking={participant.isSpeaking}
                       onClick={() => handleTileClick(participant.id)}
                     />
                   ) : (
@@ -295,6 +296,7 @@ export function Canvas({
                       participant={participant}
                       isLocal={participant.id === localParticipant.id}
                       allowRotate={!isMobile}
+                      isSpeaking={participant.isSpeaking}
                       onClick={() => handleTileClick(participant.id)}
                     />
                   )}
@@ -317,13 +319,15 @@ export function Canvas({
                   <div key={participant.id} className="h-full aspect-video flex-shrink-0">
                     {isAudioOnly || !participant.hasVideoTrack ? (
                       <AudioTile 
-                        participant={participant} 
+                        participant={participant}
+                        isSpeaking={participant.isSpeaking}
                         isPinned={pinnedParticipantId === participant.id}
                         onClick={() => handleTileClick(participant.id)}
                       />
                     ) : (
                       <VideoTile 
-                        participant={participant} 
+                        participant={participant}
+                        isSpeaking={participant.isSpeaking}
                         isPinned={pinnedParticipantId === participant.id}
                         onClick={() => handleTileClick(participant.id)}
                       />
@@ -335,13 +339,15 @@ export function Canvas({
               <div className="flex-1 relative">
                 {isAudioOnly || !spotlightParticipant.hasVideoTrack ? (
                   <AudioTile 
-                    participant={spotlightParticipant} 
+                    participant={spotlightParticipant}
+                    isSpeaking={spotlightParticipant.isSpeaking}
                     isPinned={pinnedParticipantId === spotlightParticipant.id}
                     onClick={() => handleTileClick(spotlightParticipant.id)}
                   />
                 ) : (
                   <VideoTile 
-                    participant={spotlightParticipant} 
+                    participant={spotlightParticipant}
+                    isSpeaking={spotlightParticipant.isSpeaking}
                     isPinned={pinnedParticipantId === spotlightParticipant.id}
                     onClick={() => handleTileClick(spotlightParticipant.id)}
                   />
@@ -362,15 +368,17 @@ export function Canvas({
               <div className="flex-1 relative">
                 {isAudioOnly || !spotlightParticipant.hasVideoTrack ? (
                   <AudioTile 
-                    participant={spotlightParticipant} 
+                    participant={spotlightParticipant}
                     allowRotate={!isMobile}
+                    isSpeaking={spotlightParticipant.isSpeaking}
                     isPinned={pinnedParticipantId === spotlightParticipant.id}
                     onClick={() => handleTileClick(spotlightParticipant.id)}
                   />
                 ) : (
                   <VideoTile 
-                    participant={spotlightParticipant} 
+                    participant={spotlightParticipant}
                     allowRotate={!isMobile}
+                    isSpeaking={spotlightParticipant.isSpeaking}
                     isPinned={pinnedParticipantId === spotlightParticipant.id}
                     onClick={() => handleTileClick(spotlightParticipant.id)}
                   />
@@ -389,13 +397,15 @@ export function Canvas({
                   <div key={participant.id} className="w-full aspect-video flex-shrink-0">
                     {isAudioOnly || !participant.hasVideoTrack ? (
                       <AudioTile 
-                        participant={participant} 
+                        participant={participant}
+                        isSpeaking={participant.isSpeaking}
                         isPinned={pinnedParticipantId === participant.id}
                         onClick={() => handleTileClick(participant.id)}
                       />
                     ) : (
                       <VideoTile 
-                        participant={participant} 
+                        participant={participant}
+                        isSpeaking={participant.isSpeaking}
                         isPinned={pinnedParticipantId === participant.id}
                         onClick={() => handleTileClick(participant.id)}
                       />
