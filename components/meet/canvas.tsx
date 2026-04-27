@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { MicOff } from 'lucide-react'
+import { MicOff, Grid, Maximize2, Pin } from 'lucide-react'
 import { VideoTile, AudioTile, SelfPIP } from './tiles'
 import type { LocalParticipant, ParticipantTile } from '@/types/meet'
 
@@ -29,6 +29,8 @@ export function Canvas({
   const [pipPosition, setPipPosition] = useState<'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'>('bottom-right')
   const [isLandscape, setIsLandscape] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  const [layoutMode, setLayoutMode] = useState<'grid' | 'spotlight'>('grid')
+  const [pinnedParticipantId, setPinnedParticipantId] = useState<string | null>(null)
 
   useEffect(() => {
     const checkOrientation = () => {
@@ -70,6 +72,34 @@ export function Canvas({
   // Filter out screen share participants from regular grid
   const regularParticipants = allParticipants.filter((p) => !p.sharingScreen)
 
+  // Handle tile click for pinning
+  const handleTileClick = (participantId: string) => {
+    if (pinnedParticipantId === participantId) {
+      // Unpin if already pinned
+      setPinnedParticipantId(null)
+      setLayoutMode('grid')
+    } else {
+      // Pin this participant
+      setPinnedParticipantId(participantId)
+      setLayoutMode('spotlight')
+    }
+  }
+
+  // Get the spotlighted participant (pinned or current speaker)
+  const getSpotlightParticipant = () => {
+    if (pinnedParticipantId) {
+      return regularParticipants.find(p => p.id === pinnedParticipantId) || regularParticipants[0]
+    }
+    // Find the currently speaking participant
+    const speaker = regularParticipants.find(p => p.isSpeaking)
+    return speaker || regularParticipants[0]
+  }
+
+  const spotlightParticipant = layoutMode === 'spotlight' ? getSpotlightParticipant() : null
+  const thumbnailParticipants = spotlightParticipant 
+    ? regularParticipants.filter(p => p.id !== spotlightParticipant.id)
+    : []
+
   return (
     <div className="relative w-full h-full bg-black overflow-hidden">
       {/* Screen share banner */}
@@ -80,8 +110,29 @@ export function Canvas({
         </div>
       )}
 
-      {/* Recording + captions + connection quality indicators */}
+      {/* Recording + captions + connection quality + layout toggle */}
       <div className="absolute top-4 right-4 flex items-center gap-2 z-40">
+        {/* Layout toggle (only show for 3+ participants) */}
+        {participantCount >= 3 && !remoteScreenShare && (
+          <button
+            onClick={() => {
+              if (layoutMode === 'grid') {
+                setLayoutMode('spotlight')
+              } else {
+                setLayoutMode('grid')
+                setPinnedParticipantId(null)
+              }
+            }}
+            className="flex items-center gap-1 bg-black/60 hover:bg-black/80 px-2 py-1 rounded-full transition-colors"
+            title={layoutMode === 'grid' ? 'Switch to spotlight view' : 'Switch to grid view'}
+          >
+            {layoutMode === 'grid' ? (
+              <Maximize2 className="w-3.5 h-3.5 text-white" />
+            ) : (
+              <Grid className="w-3.5 h-3.5 text-white" />
+            )}
+          </button>
+        )}
         {recordingActive && (
           <div className="flex items-center gap-1 bg-black/60 px-2 py-1 rounded-full animate-pulse">
             <div className="w-2 h-2 rounded-full bg-red-500" />
@@ -185,7 +236,7 @@ export function Canvas({
       )}
 
       {/* Grid layout for groups */}
-      {!remoteScreenShare && !is1to1 && (
+      {!remoteScreenShare && !is1to1 && layoutMode === 'grid' && (
         <>
           {/* Mobile landscape: local PIP bottom-right, others in grid */}
           {isMobile && isLandscape ? (
@@ -199,9 +250,9 @@ export function Canvas({
                 {participants.map((participant) => (
                   <div key={participant.id} className="w-full h-full min-h-0">
                     {isAudioOnly || !participant.hasVideoTrack ? (
-                      <AudioTile participant={participant} />
+                      <AudioTile participant={participant} onClick={() => handleTileClick(participant.id)} />
                     ) : (
-                      <VideoTile participant={participant} />
+                      <VideoTile participant={participant} onClick={() => handleTileClick(participant.id)} />
                     )}
                   </div>
                 ))}
@@ -234,16 +285,124 @@ export function Canvas({
               {regularParticipants.map((participant) => (
                 <div key={participant.id} className="w-full h-full min-h-0 flex items-center justify-center">
                   {isAudioOnly || !participant.hasVideoTrack ? (
-                    <AudioTile participant={participant} allowRotate={!isMobile} />
+                    <AudioTile 
+                      participant={participant} 
+                      allowRotate={!isMobile} 
+                      onClick={() => handleTileClick(participant.id)}
+                    />
                   ) : (
                     <VideoTile
                       participant={participant}
                       isLocal={participant.id === localParticipant.id}
                       allowRotate={!isMobile}
+                      onClick={() => handleTileClick(participant.id)}
                     />
                   )}
                 </div>
               ))}
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Spotlight layout - one maximized + thumbnails */}
+      {!remoteScreenShare && !is1to1 && layoutMode === 'spotlight' && spotlightParticipant && (
+        <>
+          {/* Mobile portrait: thumbnails on top, spotlight below */}
+          {isMobile && !isLandscape ? (
+            <div className="w-full h-full flex flex-col gap-1 p-1">
+              {/* Thumbnail strip - horizontal scrollable at top */}
+              <div className="h-20 flex-shrink-0 flex gap-1 overflow-x-auto pb-1">
+                {thumbnailParticipants.map((participant) => (
+                  <div key={participant.id} className="h-full aspect-video flex-shrink-0">
+                    {isAudioOnly || !participant.hasVideoTrack ? (
+                      <AudioTile 
+                        participant={participant} 
+                        isPinned={pinnedParticipantId === participant.id}
+                        onClick={() => handleTileClick(participant.id)}
+                      />
+                    ) : (
+                      <VideoTile 
+                        participant={participant} 
+                        isPinned={pinnedParticipantId === participant.id}
+                        onClick={() => handleTileClick(participant.id)}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+              {/* Spotlight tile */}
+              <div className="flex-1 relative">
+                {isAudioOnly || !spotlightParticipant.hasVideoTrack ? (
+                  <AudioTile 
+                    participant={spotlightParticipant} 
+                    isPinned={pinnedParticipantId === spotlightParticipant.id}
+                    onClick={() => handleTileClick(spotlightParticipant.id)}
+                  />
+                ) : (
+                  <VideoTile 
+                    participant={spotlightParticipant} 
+                    isPinned={pinnedParticipantId === spotlightParticipant.id}
+                    onClick={() => handleTileClick(spotlightParticipant.id)}
+                  />
+                )}
+                {/* Pinned indicator */}
+                {pinnedParticipantId === spotlightParticipant.id && (
+                  <div className="absolute top-2 left-2 bg-primary/90 px-2 py-1 rounded-full flex items-center gap-1">
+                    <Pin className="w-3 h-3 text-primary-foreground" />
+                    <span className="text-xs text-primary-foreground font-medium">Pinned</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            /* Desktop / mobile landscape: thumbnails on side, spotlight fills rest */
+            <div className="w-full h-full flex gap-1 p-1">
+              {/* Spotlight tile */}
+              <div className="flex-1 relative">
+                {isAudioOnly || !spotlightParticipant.hasVideoTrack ? (
+                  <AudioTile 
+                    participant={spotlightParticipant} 
+                    allowRotate={!isMobile}
+                    isPinned={pinnedParticipantId === spotlightParticipant.id}
+                    onClick={() => handleTileClick(spotlightParticipant.id)}
+                  />
+                ) : (
+                  <VideoTile 
+                    participant={spotlightParticipant} 
+                    allowRotate={!isMobile}
+                    isPinned={pinnedParticipantId === spotlightParticipant.id}
+                    onClick={() => handleTileClick(spotlightParticipant.id)}
+                  />
+                )}
+                {/* Pinned indicator */}
+                {pinnedParticipantId === spotlightParticipant.id && (
+                  <div className="absolute top-2 left-2 bg-primary/90 px-2 py-1 rounded-full flex items-center gap-1">
+                    <Pin className="w-3 h-3 text-primary-foreground" />
+                    <span className="text-xs text-primary-foreground font-medium">Pinned</span>
+                  </div>
+                )}
+              </div>
+              {/* Thumbnail strip - vertical scrollable on side */}
+              <div className="w-28 flex-shrink-0 flex flex-col gap-1 overflow-y-auto">
+                {thumbnailParticipants.map((participant) => (
+                  <div key={participant.id} className="w-full aspect-video flex-shrink-0">
+                    {isAudioOnly || !participant.hasVideoTrack ? (
+                      <AudioTile 
+                        participant={participant} 
+                        isPinned={pinnedParticipantId === participant.id}
+                        onClick={() => handleTileClick(participant.id)}
+                      />
+                    ) : (
+                      <VideoTile 
+                        participant={participant} 
+                        isPinned={pinnedParticipantId === participant.id}
+                        onClick={() => handleTileClick(participant.id)}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </>

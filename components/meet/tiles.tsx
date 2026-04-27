@@ -11,16 +11,19 @@ interface VideoTileProps {
   participant: ParticipantTile
   isLocal?: boolean
   allowRotate?: boolean
+  isPinned?: boolean
+  onClick?: () => void
 }
 
-export function VideoTile({ participant, isLocal = false, allowRotate = false }: VideoTileProps) {
+export function VideoTile({ participant, isLocal = false, allowRotate = false, isPinned = false, onClick }: VideoTileProps) {
   const [isPortrait, setIsPortrait] = useState(false)
 
   return (
     <div
-      className={`relative bg-black rounded-lg overflow-hidden group animate-in fade-in scale-in duration-300 transition-all ${
+      className={`relative bg-black rounded-lg overflow-hidden group animate-in fade-in scale-in duration-300 transition-all cursor-pointer ${
         allowRotate && isPortrait ? 'w-auto h-full aspect-[9/16] mx-auto' : 'w-full h-full'
-      }`}
+      } ${isPinned ? 'ring-2 ring-primary' : ''}`}
+      onClick={onClick}
     >
       {/* Video placeholder */}
       <div className="w-full h-full bg-gradient-to-br from-slate-900 to-black flex items-center justify-center">
@@ -97,16 +100,19 @@ export function VideoTile({ participant, isLocal = false, allowRotate = false }:
 interface AudioTileProps {
   participant: ParticipantTile
   allowRotate?: boolean
+  isPinned?: boolean
+  onClick?: () => void
 }
 
-export function AudioTile({ participant, allowRotate = false }: AudioTileProps) {
+export function AudioTile({ participant, allowRotate = false, isPinned = false, onClick }: AudioTileProps) {
   const [isPortrait, setIsPortrait] = useState(false)
 
   return (
     <div
-      className={`relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg overflow-hidden flex flex-col items-center justify-center gap-3 p-4 animate-in fade-in scale-in duration-300 transition-all group border border-slate-700/50 ${
+      className={`relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg overflow-hidden flex flex-col items-center justify-center gap-3 p-4 animate-in fade-in scale-in duration-300 transition-all group border cursor-pointer ${
         allowRotate && isPortrait ? 'w-auto h-full aspect-[9/16] mx-auto' : 'w-full h-full'
-      }`}
+      } ${isPinned ? 'border-primary ring-2 ring-primary' : 'border-slate-700/50'}`}
+      onClick={onClick}
     >
       {/* Audio-only badge */}
       <div className="absolute top-2 right-2 bg-slate-700/90 backdrop-blur-sm px-2 py-1 rounded-full flex items-center gap-1 text-xs text-slate-100 border border-slate-600/50">
