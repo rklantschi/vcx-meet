@@ -13,10 +13,11 @@ interface VideoTileProps {
   allowRotate?: boolean
   isPinned?: boolean
   isSpeaking?: boolean
+  compact?: boolean
   onClick?: () => void
 }
 
-export function VideoTile({ participant, isLocal = false, allowRotate = false, isPinned = false, isSpeaking = false, onClick }: VideoTileProps) {
+export function VideoTile({ participant, isLocal = false, allowRotate = false, isPinned = false, isSpeaking = false, compact = false, onClick }: VideoTileProps) {
   const [isPortrait, setIsPortrait] = useState(false)
 
   return (
@@ -30,21 +31,23 @@ export function VideoTile({ participant, isLocal = false, allowRotate = false, i
       <div className="w-full h-full bg-gradient-to-br from-slate-900 to-black flex items-center justify-center">
         <div className="text-center">
           {participant.avatar ? (
-            <img src={participant.avatar} alt={participant.displayName} className="w-16 h-16 rounded-full mx-auto mb-2" />
+            <img src={participant.avatar} alt={participant.displayName} className={`rounded-full mx-auto ${compact ? 'w-8 h-8' : 'w-16 h-16 mb-2'}`} />
           ) : (
-            <div className="w-16 h-16 rounded-full bg-muted mx-auto mb-2 flex items-center justify-center text-xl font-bold text-muted-foreground">
+            <div className={`rounded-full bg-muted mx-auto flex items-center justify-center font-bold text-muted-foreground ${compact ? 'w-8 h-8 text-sm' : 'w-16 h-16 mb-2 text-xl'}`}>
               {participant.displayName.charAt(0).toUpperCase()}
             </div>
           )}
-          <p className="text-sm text-white font-medium">{participant.displayName}</p>
+          {!compact && <p className="text-sm text-white font-medium">{participant.displayName}</p>}
         </div>
       </div>
 
-      {/* Display name overlay */}
-      <div className="absolute bottom-2 left-2 bg-black/60 px-2 py-1 rounded text-xs text-white font-medium flex items-center gap-1">
-        <span>{participant.displayName}</span>
-        {participant.isInitiator && <span className="text-amber-400">•</span>}
-      </div>
+      {/* Display name overlay - only in non-compact mode */}
+      {!compact && (
+        <div className="absolute bottom-2 left-2 bg-black/60 px-2 py-1 rounded text-xs text-white font-medium flex items-center gap-1">
+          <span>{participant.displayName}</span>
+          {participant.isInitiator && <span className="text-amber-400">•</span>}
+        </div>
+      )}
 
       {/* Mic indicator */}
       {!participant.micOn && (
@@ -103,42 +106,48 @@ interface AudioTileProps {
   allowRotate?: boolean
   isPinned?: boolean
   isSpeaking?: boolean
+  compact?: boolean
   onClick?: () => void
 }
 
-export function AudioTile({ participant, allowRotate = false, isPinned = false, isSpeaking = false, onClick }: AudioTileProps) {
+export function AudioTile({ participant, allowRotate = false, isPinned = false, isSpeaking = false, compact = false, onClick }: AudioTileProps) {
   const [isPortrait, setIsPortrait] = useState(false)
 
   return (
     <div
-      className={`relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg overflow-hidden flex flex-col items-center justify-center gap-3 p-4 animate-in fade-in scale-in duration-300 transition-all group border cursor-pointer ${
-        allowRotate && isPortrait ? 'w-auto h-full aspect-[9/16] mx-auto' : 'w-full h-full'
+      className={`relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg overflow-hidden flex flex-col items-center justify-center animate-in fade-in scale-in duration-300 transition-all group border cursor-pointer ${
+        compact ? 'gap-1 p-1' : 'gap-3 p-4'
+      } ${allowRotate && isPortrait ? 'w-auto h-full aspect-[9/16] mx-auto' : 'w-full h-full'
       } ${isSpeaking ? 'border-emerald-400 ring-2 ring-emerald-400' : 'border-slate-700/50'} ${isPinned ? 'border-primary ring-2 ring-primary' : ''}`}
       onClick={onClick}
     >
-      {/* Audio-only badge */}
-      <div className="absolute top-2 right-2 bg-slate-700/90 backdrop-blur-sm px-2 py-1 rounded-full flex items-center gap-1 text-xs text-slate-100 border border-slate-600/50">
-        <Mic className="w-3 h-3" />
-        <span className="font-medium">Audio only</span>
-      </div>
+      {/* Audio-only badge - only in non-compact */}
+      {!compact && (
+        <div className="absolute top-2 right-2 bg-slate-700/90 backdrop-blur-sm px-2 py-1 rounded-full flex items-center gap-1 text-xs text-slate-100 border border-slate-600/50">
+          <Mic className="w-3 h-3" />
+          <span className="font-medium">Audio only</span>
+        </div>
+      )}
 
       {/* Avatar */}
       {participant.avatar ? (
-        <img src={participant.avatar} alt={participant.displayName} className="w-20 h-20 rounded-full border-2 border-slate-600/50" />
+        <img src={participant.avatar} alt={participant.displayName} className={`rounded-full border-2 border-slate-600/50 ${compact ? 'w-8 h-8' : 'w-20 h-20'}`} />
       ) : (
-        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center text-2xl font-bold text-slate-300 border-2 border-slate-600/50">
+        <div className={`rounded-full bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center font-bold text-slate-300 border-2 border-slate-600/50 ${compact ? 'w-8 h-8 text-sm' : 'w-20 h-20 text-2xl'}`}>
           {participant.displayName.charAt(0).toUpperCase()}
         </div>
       )}
 
-      {/* Display name */}
-      <div className="text-center">
-        <p className="text-sm text-slate-100 font-medium">{participant.displayName}</p>
-        {participant.isInitiator && <p className="text-xs text-amber-400 mt-0.5">Initiator</p>}
-      </div>
+      {/* Display name - only in non-compact */}
+      {!compact && (
+        <div className="text-center">
+          <p className="text-sm text-slate-100 font-medium">{participant.displayName}</p>
+          {participant.isInitiator && <p className="text-xs text-amber-400 mt-0.5">Initiator</p>}
+        </div>
+      )}
 
-      {/* Speaking indicator with animation */}
-      {participant.isSpeaking && (
+      {/* Speaking indicator with animation - only in non-compact */}
+      {!compact && participant.isSpeaking && (
         <div className="flex gap-1">
           {[0, 1, 2].map((i) => (
             <div
@@ -150,20 +159,22 @@ export function AudioTile({ participant, allowRotate = false, isPinned = false, 
         </div>
       )}
 
-      {/* Mic status */}
-      <div className="flex items-center gap-1 text-xs text-slate-300">
-        {participant.micOn ? (
-          <>
-            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-            <span>Mic on</span>
-          </>
-        ) : (
-          <>
-            <MicOff className="w-3 h-3 text-red-500" />
-            <span>Mic off</span>
-          </>
-        )}
-      </div>
+      {/* Mic status - only in non-compact */}
+      {!compact && (
+        <div className="flex items-center gap-1 text-xs text-slate-300">
+          {participant.micOn ? (
+            <>
+              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              <span>Mic on</span>
+            </>
+          ) : (
+            <>
+              <MicOff className="w-3 h-3 text-red-500" />
+              <span>Mic off</span>
+            </>
+          )}
+        </div>
+      )}
 
       {/* Rotate button */}
       {allowRotate && (

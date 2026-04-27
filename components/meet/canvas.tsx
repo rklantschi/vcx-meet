@@ -323,7 +323,7 @@ export function Canvas({
           {isMobile && !isLandscape ? (
             <div className="w-full h-full flex flex-col gap-1 p-1">
               {/* Thumbnail strip - horizontal scrollable at top */}
-              <div className="h-20 flex-shrink-0 flex gap-1 overflow-x-auto pb-1">
+              <div className="h-16 flex-shrink-0 flex gap-1 overflow-x-auto">
                 {thumbnailParticipants.map((participant) => (
                   <div key={participant.id} className="h-full aspect-video flex-shrink-0">
                     {isAudioOnly || !participant.hasVideoTrack ? (
@@ -331,6 +331,7 @@ export function Canvas({
                         participant={participant}
                         isSpeaking={participant.isSpeaking}
                         isPinned={pinnedParticipantId === participant.id}
+                        compact
                         onClick={() => handleTileClick(participant.id)}
                       />
                     ) : (
@@ -338,6 +339,7 @@ export function Canvas({
                         participant={participant}
                         isSpeaking={participant.isSpeaking}
                         isPinned={pinnedParticipantId === participant.id}
+                        compact
                         onClick={() => handleTileClick(participant.id)}
                       />
                     )}
@@ -401,7 +403,7 @@ export function Canvas({
                 )}
               </div>
               {/* Thumbnail strip - vertical scrollable on side */}
-              <div className="w-28 flex-shrink-0 flex flex-col gap-1 overflow-y-auto">
+              <div className="w-24 flex-shrink-0 flex flex-col gap-1 overflow-y-auto">
                 {thumbnailParticipants.map((participant) => (
                   <div key={participant.id} className="w-full aspect-video flex-shrink-0">
                     {isAudioOnly || !participant.hasVideoTrack ? (
@@ -409,6 +411,7 @@ export function Canvas({
                         participant={participant}
                         isSpeaking={participant.isSpeaking}
                         isPinned={pinnedParticipantId === participant.id}
+                        compact
                         onClick={() => handleTileClick(participant.id)}
                       />
                     ) : (
@@ -416,6 +419,7 @@ export function Canvas({
                         participant={participant}
                         isSpeaking={participant.isSpeaking}
                         isPinned={pinnedParticipantId === participant.id}
+                        compact
                         onClick={() => handleTileClick(participant.id)}
                       />
                     )}
