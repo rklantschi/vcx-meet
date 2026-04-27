@@ -17,6 +17,8 @@ import {
   VideoOff,
   Volume2,
   VolumeX,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -70,6 +72,9 @@ interface ActionBarProps {
   onMicVolumeChange?: (volume: number) => void
   onSpeakerVolumeChange?: (volume: number) => void
   onLeave: () => void
+  onToggleSidePanel?: () => void
+  showSidePanelToggle?: boolean
+  sidePanelCollapsed?: boolean
   t: TranslationStrings
 }
 
@@ -108,6 +113,9 @@ export function ActionBar({
   onMicVolumeChange,
   onSpeakerVolumeChange,
   onLeave,
+  onToggleSidePanel,
+  showSidePanelToggle = false,
+  sidePanelCollapsed = false,
   t,
 }: ActionBarProps) {
   const [showSettingsDialog, setShowSettingsDialog] = useState(false)
@@ -285,6 +293,29 @@ export function ActionBar({
 
         {/* More menu — always visible; on mobile also includes secondary controls */}
         <div className="flex items-center gap-2 sm:gap-3">
+          {/* Side panel toggle — only show if enabled */}
+          {showSidePanelToggle && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="rounded-full"
+                  onClick={onToggleSidePanel}
+                >
+                  {sidePanelCollapsed ? (
+                    <ChevronLeft className="w-5 h-5" />
+                  ) : (
+                    <ChevronRight className="w-5 h-5" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                {sidePanelCollapsed ? 'Show panel' : 'Hide panel'}
+              </TooltipContent>
+            </Tooltip>
+          )}
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="icon" className="rounded-full">

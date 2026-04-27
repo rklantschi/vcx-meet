@@ -45,6 +45,9 @@ interface InMeetingProps {
   onMicVolumeChange?: (volume: number) => void
   onSpeakerVolumeChange?: (volume: number) => void
   onLeave: () => void
+  onToggleSidePanel?: () => void
+  showSidePanelToggle?: boolean
+  sidePanelCollapsed?: boolean
   t: TranslationStrings
 }
 
@@ -78,6 +81,9 @@ export function InMeeting({
   onMicVolumeChange,
   onSpeakerVolumeChange,
   onLeave,
+  onToggleSidePanel,
+  showSidePanelToggle = false,
+  sidePanelCollapsed = false,
   t,
 }: InMeetingProps) {
   const [actionBarVisible, setActionBarVisible] = useState(true)
@@ -195,6 +201,9 @@ export function InMeeting({
           onMicVolumeChange={onMicVolumeChange}
           onSpeakerVolumeChange={onSpeakerVolumeChange}
           onLeave={onLeave}
+          onToggleSidePanel={onToggleSidePanel}
+          showSidePanelToggle={showSidePanelToggle}
+          sidePanelCollapsed={sidePanelCollapsed}
           t={t}
           isLandscapeMobile={isLandscapeMobile}
         />

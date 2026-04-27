@@ -69,12 +69,15 @@ interface MeetSurfaceProps {
   onRejoin?: () => void
   onSubmitFeedback?: (feedback: FeedbackSubmission) => void
   onReturn?: () => void
+  onToggleSidePanel?: () => void
 
   // Translation
   t: TranslationStrings
 
   // Optional
   isLoading?: boolean
+  showSidePanelToggle?: boolean
+  sidePanelCollapsed?: boolean
 }
 
 export function MeetSurface({
@@ -118,8 +121,11 @@ export function MeetSurface({
   onRejoin,
   onSubmitFeedback = () => {},
   onReturn = () => {},
+  onToggleSidePanel,
   t,
   isLoading = false,
+  showSidePanelToggle = false,
+  sidePanelCollapsed = false,
 }: MeetSurfaceProps) {
   // Default translations
   const translations: TranslationStrings = {
@@ -213,6 +219,9 @@ export function MeetSurface({
         onMicVolumeChange={onMicVolumeChange}
         onSpeakerVolumeChange={onSpeakerVolumeChange}
         onLeave={onLeave}
+        onToggleSidePanel={onToggleSidePanel}
+        showSidePanelToggle={showSidePanelToggle}
+        sidePanelCollapsed={sidePanelCollapsed}
         t={translations}
       />
     )
