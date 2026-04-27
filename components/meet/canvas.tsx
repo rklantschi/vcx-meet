@@ -125,14 +125,8 @@ export function Canvas({
         </div>
       )}
 
-      {/* Recording + layout toggle — single row, top-right */}
+      {/* Layout toggle + recording — single row, top-right */}
       <div className="absolute top-3 right-3 flex items-center gap-2 z-50">
-        {recordingActive && (
-          <div className="flex items-center gap-1.5 bg-red-600/90 px-2 py-1 rounded-full animate-pulse">
-            <Circle className="w-2.5 h-2.5 text-red-200 fill-red-200" />
-            <span className="hidden sm:inline text-xs text-white font-medium">Rec</span>
-          </div>
-        )}
         {participantCount >= 3 && !remoteScreenShare && (
           <button
             onClick={() => {
@@ -161,6 +155,12 @@ export function Canvas({
               </>
             )}
           </button>
+        )}
+        {recordingActive && (
+          <div className="flex items-center gap-1.5 bg-red-600/90 px-2 py-1 rounded-full animate-pulse">
+            <Circle className="w-2.5 h-2.5 text-red-200 fill-red-200" />
+            <span className="hidden sm:inline text-xs text-white font-medium">Rec</span>
+          </div>
         )}
       </div>
 
