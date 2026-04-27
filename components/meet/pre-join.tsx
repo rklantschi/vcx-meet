@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { AlertCircle, Volume2, Play, Mic, VideoOff, RotateCcw } from 'lucide-react'
+import { AlertCircle, Volume2, Play, Mic, VideoOff, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -29,6 +29,9 @@ interface PreJoinProps {
   onSendNudge: () => void
   t: TranslationStrings
   isLoading?: boolean
+  showSidePanelToggle?: boolean
+  sidePanelCollapsed?: boolean
+  onToggleSidePanel?: () => void
 }
 
 export function PreJoin({
@@ -43,6 +46,9 @@ export function PreJoin({
   onSendNudge,
   t,
   isLoading = false,
+  showSidePanelToggle = false,
+  sidePanelCollapsed = false,
+  onToggleSidePanel,
 }: PreJoinProps) {
   // Helper to format scheduled time
   const getScheduledTimeString = () => {
@@ -189,7 +195,7 @@ export function PreJoin({
   const scheduledStartTime = meeting.scheduledStart ? new Date(meeting.scheduledStart).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : null
 
   return (
-    <div className="h-screen flex flex-col items-center bg-background p-4 overflow-y-auto">
+    <div className="relative h-screen flex flex-col items-center bg-background p-4 overflow-y-auto">
       {/* Logo - mobile only */}
       {tenantBranding.logoUrl && (
         <div className="absolute top-6 left-6 md:hidden">
@@ -612,6 +618,21 @@ export function PreJoin({
           )}
         </div>
       </div>
+
+      {/* Side panel toggle — bottom-right corner */}
+      {showSidePanelToggle && (
+        <button
+          onClick={onToggleSidePanel}
+          className="absolute bottom-4 right-4 bg-muted hover:bg-muted/80 border border-border p-2 rounded-full transition-colors"
+          title={sidePanelCollapsed ? 'Show panel' : 'Hide panel'}
+        >
+          {sidePanelCollapsed ? (
+            <ChevronLeft className="w-4 h-4 text-foreground" />
+          ) : (
+            <ChevronRight className="w-4 h-4 text-foreground" />
+          )}
+        </button>
+      )}
     </div>
   )
 }

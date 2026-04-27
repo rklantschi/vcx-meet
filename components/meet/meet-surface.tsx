@@ -184,6 +184,9 @@ export function MeetSurface({
         onSendNudge={onSendNudge}
         t={translations}
         isLoading={isLoading}
+        showSidePanelToggle={showSidePanelToggle}
+        sidePanelCollapsed={sidePanelCollapsed}
+        onToggleSidePanel={onToggleSidePanel}
       />
     )
   }
@@ -236,6 +239,9 @@ export function MeetSurface({
         onRejoin={onRejoin}
         onReturn={onReturn}
         t={translations}
+        showSidePanelToggle={showSidePanelToggle}
+        sidePanelCollapsed={sidePanelCollapsed}
+        onToggleSidePanel={onToggleSidePanel}
       />
     )
   }

@@ -1,6 +1,6 @@
 'use client'
 
-import { MessageSquare } from 'lucide-react'
+import { MessageSquare, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { Meeting, TenantBranding, MeetingEndReason, TranslationStrings } from '@/types/meet'
 
@@ -11,6 +11,9 @@ interface EndedStateProps {
   onRejoin?: () => void
   onReturn: () => void
   t: TranslationStrings
+  showSidePanelToggle?: boolean
+  sidePanelCollapsed?: boolean
+  onToggleSidePanel?: () => void
 }
 
 export function EndedState({
@@ -20,6 +23,9 @@ export function EndedState({
   onRejoin,
   onReturn,
   t,
+  showSidePanelToggle = false,
+  sidePanelCollapsed = false,
+  onToggleSidePanel,
 }: EndedStateProps) {
   const getHeadline = () => {
     switch (endedReason) {
@@ -46,7 +52,7 @@ export function EndedState({
   }
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center bg-background p-4 gap-8">
+    <div className="relative h-screen flex flex-col items-center justify-center bg-background p-4 gap-8">
       {/* Logo */}
       {tenantBranding.logoUrl && (
         <div className="absolute top-6 left-6">
@@ -83,6 +89,21 @@ export function EndedState({
           </Button>
         </div>
       </div>
+
+      {/* Side panel toggle — bottom-right corner */}
+      {showSidePanelToggle && (
+        <button
+          onClick={onToggleSidePanel}
+          className="absolute bottom-4 right-4 bg-muted hover:bg-muted/80 border border-border p-2 rounded-full transition-colors"
+          title={sidePanelCollapsed ? 'Show panel' : 'Hide panel'}
+        >
+          {sidePanelCollapsed ? (
+            <ChevronLeft className="w-4 h-4 text-foreground" />
+          ) : (
+            <ChevronRight className="w-4 h-4 text-foreground" />
+          )}
+        </button>
+      )}
     </div>
   )
 }
