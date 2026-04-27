@@ -61,19 +61,9 @@ export function VideoTile({ participant, isLocal = false, allowRotate = false, i
         </div>
       )}
 
-      {/* Speaking indicator - animated border pulse */}
-      {participant.isSpeaking && (
-        <>
-          <div className="absolute inset-0 rounded-lg pointer-events-none">
-            <div className="absolute inset-0 border-2 border-emerald-400 rounded-lg animate-pulse" />
-            <div className="absolute inset-1 border border-emerald-400/50 rounded-lg" />
-          </div>
-        </>
-      )}
-
       {/* Connection quality dot */}
       <div 
-        className="absolute bottom-2 right-2 w-2 h-2 rounded-full"
+        className="absolute bottom-2 left-2 w-2 h-2 rounded-full"
         style={{
           backgroundColor: 
             participant.connectionQuality === 'excellent' ? '#10b981' :
@@ -84,13 +74,16 @@ export function VideoTile({ participant, isLocal = false, allowRotate = false, i
         title={`Connection: ${participant.connectionQuality}`}
       />
 
-      {/* Dual presence badge */}
-      {participant.isOnPstn && (
-        <div className="absolute top-2 right-2 bg-slate-600/80 px-2 py-1 rounded text-xs text-white font-medium flex items-center gap-1">
-          <Phone className="w-3 h-3" />
-          PSTN
-        </div>
-      )}
+      {/* Top-right badges area - stack vertically */}
+      <div className="absolute top-2 right-2 flex flex-col gap-1">
+        {/* Dual presence badge */}
+        {participant.isOnPstn && (
+          <div className="bg-slate-600/80 px-2 py-1 rounded text-xs text-white font-medium flex items-center gap-1">
+            <Phone className="w-3 h-3" />
+            PSTN
+          </div>
+        )}
+      </div>
 
       {/* Rotate button (desktop only) */}
       {allowRotate && (
@@ -133,6 +126,17 @@ export function AudioTile({ participant, allowRotate = false, isPinned = false, 
           <Mic className="w-3 h-3" />
           <span className="font-medium">Audio only</span>
         </div>
+      )}
+
+      {/* Rotate button - top left */}
+      {allowRotate && (
+        <button
+          onClick={() => setIsPortrait(p => !p)}
+          className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 hover:bg-black/80 p-1.5 rounded-full"
+          title={isPortrait ? 'Switch to landscape' : 'Switch to portrait'}
+        >
+          <RotateCcw className={`w-3.5 h-3.5 text-white transition-transform ${isPortrait ? 'rotate-90' : ''}`} />
+        </button>
       )}
 
       {/* Avatar */}
@@ -184,17 +188,6 @@ export function AudioTile({ participant, allowRotate = false, isPinned = false, 
             </>
           )}
         </div>
-      )}
-
-      {/* Rotate button */}
-      {allowRotate && (
-        <button
-          onClick={() => setIsPortrait(p => !p)}
-          className="absolute bottom-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 hover:bg-black/80 p-1.5 rounded-full"
-          title={isPortrait ? 'Switch to landscape' : 'Switch to portrait'}
-        >
-          <RotateCcw className={`w-3.5 h-3.5 text-white transition-transform ${isPortrait ? 'rotate-90' : ''}`} />
-        </button>
       )}
     </div>
   )
