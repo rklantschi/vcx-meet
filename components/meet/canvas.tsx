@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { MicOff, Grid, Maximize2 } from 'lucide-react'
+import { MicOff, Grid, Maximize2, Circle } from 'lucide-react'
 import { VideoTile, AudioTile, SelfPIP } from './tiles'
 import type { LocalParticipant, ParticipantTile } from '@/types/meet'
 
@@ -158,14 +158,9 @@ export function Canvas({
           </button>
         )}
         {recordingActive && (
-          <div className="flex items-center gap-1 bg-black/60 px-2 py-1 rounded-full animate-pulse">
-            <div className="w-2 h-2 rounded-full bg-red-500" />
-            <span className="text-xs text-white font-medium">Recording</span>
-          </div>
-        )}
-        {captionsEnabled && (
-          <div className="flex items-center gap-1 bg-black/60 px-2 py-1 rounded-full">
-            <span className="text-xs text-white font-medium">CC</span>
+          <div className="flex items-center gap-1.5 bg-black/60 px-2.5 py-1.5 rounded-full animate-pulse">
+            <Circle className="w-2.5 h-2.5 text-red-500 fill-red-500" />
+            <span className="text-xs text-white font-medium">Rec</span>
           </div>
         )}
         {/* Connection quality */}
