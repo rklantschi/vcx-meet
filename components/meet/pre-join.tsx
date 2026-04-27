@@ -44,6 +44,16 @@ export function PreJoin({
   t,
   isLoading = false,
 }: PreJoinProps) {
+  // Helper to format scheduled time
+  const getScheduledTimeString = () => {
+    if (!meeting.scheduledStart) return ''
+    const start = new Date(meeting.scheduledStart)
+    const time = start.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })
+    const date = start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    return `${time} • ${date}`
+  }
+
+  const scheduledTime = getScheduledTimeString()
   const [displayName, setDisplayName] = useState(localUser.displayName)
   const [micId, setMicId] = useState(availableDevices.mics[0]?.id || '')
   const [cameraId, setCameraId] = useState(availableDevices.cameras[0]?.id || '')
@@ -182,8 +192,9 @@ export function PreJoin({
         {/* Meeting info */}
         <div className="text-center">
           <h1 className="text-lg font-semibold text-foreground">{meeting.title || t.meeting_title || 'Join Meeting'}</h1>
+          {scheduledTime && <p className="text-xs text-muted-foreground mt-0.5">{scheduledTime}</p>}
           {meeting.initiatorName && (
-            <p className="text-xs text-muted-foreground">{t.initiated_by || 'Meeting with'} {meeting.initiatorName}</p>
+            <p className="text-xs text-muted-foreground mt-1">{t.initiated_by || 'Meeting with'} {meeting.initiatorName}</p>
           )}
         </div>
 
@@ -529,6 +540,9 @@ export function PreJoin({
             <h1 className="text-4xl font-bold text-foreground text-pretty leading-tight">
               {meeting.title || t.meeting_title || 'Join Meeting'}
             </h1>
+            {scheduledTime && (
+              <p className="text-sm text-muted-foreground mt-2">{scheduledTime}</p>
+            )}
             {meeting.initiatorName && (
               <p className="text-base text-muted-foreground mt-3">
                 {t.initiated_by || 'Meeting with'} {meeting.initiatorName}
