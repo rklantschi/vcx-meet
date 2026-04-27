@@ -68,14 +68,53 @@ export function PreJoin({
   const [previewPortrait, setPreviewPortrait] = useState(false)
   const micAnimationRef = useRef<number | null>(null)
   const testRecordingTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const cameraStreamRef = useRef<MediaStream | null>(null)
 
-  // Simulate camera preview
+  // Camera preview using getUserMedia
   useEffect(() => {
-    if (videoPreviewRef.current && cameraEnabled) {
-      // In real app, this would use getUserMedia
-      videoPreviewRef.current.style.backgroundColor = 'rgba(0,0,0,0.1)'
+    const startCamera = async () => {
+      if (cameraEnabled && videoPreviewRef.current) {
+        try {
+          // Stop any existing stream first
+          if (cameraStreamRef.current) {
+            cameraStreamRef.current.getTracks().forEach(track => track.stop())
+          }
+          
+          const constraints: MediaStreamConstraints = {
+            video: cameraId ? { deviceId: { exact: cameraId } } : true,
+            audio: false, // We don't need audio for preview
+          }
+          
+          const stream = await navigator.mediaDevices.getUserMedia(constraints)
+          cameraStreamRef.current = stream
+          
+          if (videoPreviewRef.current) {
+            videoPreviewRef.current.srcObject = stream
+          }
+        } catch (error) {
+          console.log('[v0] Camera access error:', error instanceof Error ? error.message : error)
+        }
+      } else {
+        // Stop camera when disabled
+        if (cameraStreamRef.current) {
+          cameraStreamRef.current.getTracks().forEach(track => track.stop())
+          cameraStreamRef.current = null
+        }
+        if (videoPreviewRef.current) {
+          videoPreviewRef.current.srcObject = null
+        }
+      }
     }
-  }, [cameraEnabled])
+    
+    startCamera()
+    
+    // Cleanup on unmount
+    return () => {
+      if (cameraStreamRef.current) {
+        cameraStreamRef.current.getTracks().forEach(track => track.stop())
+      }
+    }
+  }, [cameraEnabled, cameraId])
 
   // Simulate mic level animation when mic is enabled
   useEffect(() => {
@@ -161,22 +200,20 @@ export function PreJoin({
       {/* Mobile layout (< md) */}
       <div className="md:hidden w-full max-w-md flex flex-col items-center gap-3 my-auto py-4">
         {/* Camera preview */}
-        <div className="w-40 h-40 rounded-xl bg-muted border-2 border-border overflow-hidden flex items-center justify-center relative">
+        <div className="w-40 h-40 rounded-xl bg-black border-2 border-border overflow-hidden flex items-center justify-center relative">
           {cameraEnabled ? (
             <div className="w-full h-full relative">
               <video
-                ref={videoPreviewRef}
-                className="w-full h-full object-cover"
+                ref={(video) => {
+                  if (video && cameraStreamRef.current) {
+                    video.srcObject = cameraStreamRef.current
+                  }
+                }}
+                className="w-full h-full object-cover scale-x-[-1]"
                 autoPlay
                 muted
                 playsInline
               />
-              {/* Simulated camera preview overlay */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
-                <div className="text-4xl font-bold text-foreground/80">
-                  {displayName.charAt(0).toUpperCase() || '?'}
-                </div>
-              </div>
               {/* Camera active indicator */}
               <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-green-500 animate-pulse" />
             </div>
@@ -397,19 +434,19 @@ export function PreJoin({
             }`}
           >
             {cameraEnabled ? (
-              <div className="w-full h-full relative">
+              <div className="w-full h-full relative bg-black">
                 <video
-                  ref={videoPreviewRef}
-                  className="w-full h-full object-cover"
+                  ref={(video) => {
+                    videoPreviewRef.current = video
+                    if (video && cameraStreamRef.current) {
+                      video.srcObject = cameraStreamRef.current
+                    }
+                  }}
+                  className="w-full h-full object-cover scale-x-[-1]"
                   autoPlay
                   muted
                   playsInline
                 />
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
-                  <div className="text-9xl font-bold text-foreground/60">
-                    {displayName.charAt(0).toUpperCase() || '?'}
-                  </div>
-                </div>
                 <div className="absolute top-4 right-4 flex items-center gap-2 bg-black/50 px-3 py-1.5 rounded-full">
                   <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                   <span className="text-xs text-white">{t.camera_on || 'Camera on'}</span>
