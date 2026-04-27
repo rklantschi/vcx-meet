@@ -252,7 +252,7 @@ export function PreJoin({
               className="flex-1"
             >
               <Mic className="w-4 h-4 mr-2" />
-              {t.test_mic || 'Test mic'}
+              {t.test_mic || 'Test audio'}
             </Button>
           )}
           {testState === 'recording' && (
@@ -482,7 +482,7 @@ export function PreJoin({
               {testState === 'idle' && (
                 <Button variant="outline" size="sm" onClick={handleStartRecording} disabled={!micEnabled}>
                   <Mic className="w-4 h-4 mr-2" />
-                  {t.test_mic || 'Test mic & speaker'}
+                  {t.test_mic || 'Test audio'}
                 </Button>
               )}
               {testState === 'recording' && (
