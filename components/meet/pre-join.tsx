@@ -344,38 +344,38 @@ export function PreJoin({
         </div>
 
         {/* Join buttons */}
-          <div className="flex gap-3">
-            <Button
-              onClick={() => handleJoinClick('voice')}
-              disabled={isJoinDisabled || isLoading}
-              className="flex-1"
-              size="lg"
-            >
-              {t.join_voice || 'Join voice'}
-            </Button>
-            <Button
-              onClick={() => handleJoinClick('video')}
-              disabled={isJoinDisabled || isLoading}
-              className="flex-1"
-              size="lg"
-            >
-              {t.join_video || 'Join video'}
-            </Button>
-          </div>
-
-          {/* Cancel */}
-          <Button onClick={onCancel} variant="ghost" className="-mt-2">
-            {t.cancel || 'Cancel'}
+        <div className="w-full flex gap-3">
+          <Button
+            onClick={() => handleJoinClick('voice')}
+            disabled={isJoinDisabled || isLoading}
+            className="flex-1"
+            size="lg"
+          >
+            {t.join_voice || 'Join voice'}
           </Button>
-
-          {/* Tenant branding footer - desktop only */}
-          {localUser.isGuest && (
-            <div className="text-xs text-muted-foreground">
-              {t.powered_by || 'Powered by Vortex CX'}
-            </div>
-          )}
+          <Button
+            onClick={() => handleJoinClick('video')}
+            disabled={isJoinDisabled || isLoading}
+            className="flex-1"
+            size="lg"
+          >
+            {t.join_video || 'Join video'}
+          </Button>
         </div>
+
+        {/* Cancel */}
+        <Button onClick={onCancel} variant="ghost" className="-mt-2">
+          {t.cancel || 'Cancel'}
+        </Button>
+
+        {/* Tenant branding footer */}
+        {localUser.isGuest && (
+          <div className="text-xs text-muted-foreground">
+            {t.powered_by || 'Powered by Vortex CX'}
+          </div>
+        )}
       </div>
     </div>
+  )
   )
 }
