@@ -154,9 +154,9 @@ export function PreJoin({
       )}
 
       {/* Mobile layout (< md) */}
-      <div className="md:hidden w-full max-w-md flex flex-col items-center gap-6 my-auto py-6">
+      <div className="md:hidden w-full max-w-md flex flex-col items-center gap-3 my-auto py-4">
         {/* Camera preview */}
-        <div className="w-32 h-32 rounded-2xl bg-muted border-2 border-border overflow-hidden flex items-center justify-center relative">
+        <div className="w-24 h-24 rounded-xl bg-muted border-2 border-border overflow-hidden flex items-center justify-center relative">
           {cameraEnabled ? (
             <div className="w-full h-full relative">
               <video
@@ -168,17 +168,17 @@ export function PreJoin({
               />
               {/* Simulated camera preview overlay */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
-                <div className="text-3xl font-bold text-foreground/80">
+                <div className="text-2xl font-bold text-foreground/80">
                   {displayName.charAt(0).toUpperCase() || '?'}
                 </div>
               </div>
               {/* Camera active indicator */}
-              <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              <div className="absolute top-1 right-1 w-2 h-2 rounded-full bg-green-500 animate-pulse" />
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center w-full h-full bg-muted">
-              <VideoOff className="w-8 h-8 text-muted-foreground mb-1" />
-              <div className="text-2xl font-bold text-muted-foreground">
+              <VideoOff className="w-6 h-6 text-muted-foreground mb-1" />
+              <div className="text-xl font-bold text-muted-foreground">
                 {displayName.charAt(0).toUpperCase() || '?'}
               </div>
             </div>
@@ -187,9 +187,9 @@ export function PreJoin({
 
         {/* Meeting info */}
         <div className="text-center">
-          <h1 className="text-xl font-semibold text-foreground">{meeting.title || t.meeting_title || 'Join Meeting'}</h1>
+          <h1 className="text-lg font-semibold text-foreground">{meeting.title || t.meeting_title || 'Join Meeting'}</h1>
           {meeting.initiatorName && (
-            <p className="text-sm text-muted-foreground">{t.initiated_by || 'Meeting with'} {meeting.initiatorName}</p>
+            <p className="text-xs text-muted-foreground">{t.initiated_by || 'Meeting with'} {meeting.initiatorName}</p>
           )}
         </div>
 
@@ -231,12 +231,12 @@ export function PreJoin({
         )}
 
         {/* Mic level indicator */}
-        <div className="w-full space-y-2">
+        <div className="w-full space-y-1">
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <span>{t.microphone_level || 'Microphone level'}</span>
             <span>{micEnabled ? `${Math.round(micLevel)}%` : t.muted || 'Muted'}</span>
           </div>
-          <div className="h-2 bg-muted rounded-full overflow-hidden">
+          <div className="h-1.5 bg-muted rounded-full overflow-hidden">
             <div 
               className="h-full bg-accent rounded-full transition-all duration-75"
               style={{ width: `${micLevel}%` }}
@@ -315,24 +315,24 @@ export function PreJoin({
         <div className="w-full flex gap-2 justify-center">
           <button
             onClick={() => setMicEnabled(!micEnabled)}
-            className="w-10 h-10 rounded-full bg-muted hover:bg-muted-foreground/20 flex items-center justify-center transition-colors"
+            className="w-9 h-9 rounded-full bg-muted hover:bg-muted-foreground/20 flex items-center justify-center transition-colors"
             title={t.toggle_microphone || 'Toggle microphone'}
           >
             {micEnabled ? (
-              <Mic className="w-5 h-5 text-foreground" />
+              <Mic className="w-4 h-4 text-foreground" />
             ) : (
-              <MicOff className="w-5 h-5 text-destructive" />
+              <MicOff className="w-4 h-4 text-destructive" />
             )}
           </button>
           <button
             onClick={() => setCameraEnabled(!cameraEnabled)}
-            className="w-10 h-10 rounded-full bg-muted hover:bg-muted-foreground/20 flex items-center justify-center transition-colors"
+            className="w-9 h-9 rounded-full bg-muted hover:bg-muted-foreground/20 flex items-center justify-center transition-colors"
             title={t.toggle_camera || 'Toggle camera'}
           >
             {cameraEnabled ? (
-              <Video className="w-5 h-5 text-foreground" />
+              <Video className="w-4 h-4 text-foreground" />
             ) : (
-              <VideoOff className="w-5 h-5 text-destructive" />
+              <VideoOff className="w-4 h-4 text-destructive" />
             )}
           </button>
         </div>
@@ -343,17 +343,17 @@ export function PreJoin({
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
             placeholder={t.display_name_placeholder || 'Your name'}
-            className="text-center"
+            className="text-center h-9 text-sm"
           />
         </div>
 
         {/* Device pickers */}
-        <div className="w-full space-y-3">
+        <div className="w-full space-y-2">
           {/* Microphone select */}
           <div className="flex items-center gap-2">
-            <Mic className="w-4 h-4 text-muted-foreground" />
+            <Mic className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
             <Select value={micId} onValueChange={setMicId}>
-              <SelectTrigger className="flex-1">
+              <SelectTrigger className="flex-1 h-9 text-sm">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -368,9 +368,9 @@ export function PreJoin({
 
           {/* Camera select */}
           <div className="flex items-center gap-2">
-            <Video className="w-4 h-4 text-muted-foreground" />
+            <Video className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
             <Select value={cameraId} onValueChange={setCameraId}>
-              <SelectTrigger className="flex-1">
+              <SelectTrigger className="flex-1 h-9 text-sm">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -385,9 +385,9 @@ export function PreJoin({
 
           {/* Speaker select */}
           <div className="flex items-center gap-2">
-            <Volume2 className="w-4 h-4 text-muted-foreground" />
+            <Volume2 className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
             <Select value={speakerId} onValueChange={setSpeakerId}>
-              <SelectTrigger className="flex-1">
+              <SelectTrigger className="flex-1 h-9 text-sm">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -409,12 +409,12 @@ export function PreJoin({
         )}
 
         {/* Join buttons */}
-        <div className="w-full flex gap-3">
+        <div className="w-full flex gap-2 pt-1">
           <Button
             onClick={() => handleJoinClick('voice')}
             disabled={isJoinDisabled || isLoading}
             className="flex-1"
-            size="lg"
+            size="default"
           >
             {t.join_voice || 'Join voice'}
           </Button>
@@ -422,20 +422,20 @@ export function PreJoin({
             onClick={() => handleJoinClick('video')}
             disabled={isJoinDisabled || isLoading}
             className="flex-1"
-            size="lg"
+            size="default"
           >
             {t.join_video || 'Join video'}
           </Button>
         </div>
 
         {/* Cancel */}
-        <Button onClick={onCancel} variant="ghost" className="w-full -mt-2">
+        <Button onClick={onCancel} variant="ghost" size="sm" className="w-full">
           {t.cancel || 'Cancel'}
         </Button>
 
         {/* Powered by footer - mobile */}
         {localUser.isGuest && (
-          <div className="text-xs text-muted-foreground">
+          <div className="text-xs text-muted-foreground mt-2">
             {t.powered_by || 'Powered by Vortex CX'}
           </div>
         )}
