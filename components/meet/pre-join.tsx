@@ -377,5 +377,4 @@ export function PreJoin({
       </div>
     </div>
   )
-  )
 }
