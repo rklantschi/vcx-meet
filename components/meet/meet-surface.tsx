@@ -79,6 +79,7 @@ export function MeetSurface({
   tenantBranding,
   availableDevices,
   otherParty,
+  captionLines = [],
   onJoin,
   onCancel,
   onSendNudge,
