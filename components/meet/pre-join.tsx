@@ -230,8 +230,25 @@ export function PreJoin({
           </Alert>
         )}
 
-        {/* Test mic/speaker buttons */}
-        <div className="w-full flex gap-2">
+        {/* Display name input */}
+        <div className="w-full">
+          <Input
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+            placeholder={t.display_name_placeholder || 'Your name'}
+            className="text-center h-9 text-sm"
+          />
+        </div>
+
+        {/* Display name required warning */}
+        {isDisplayNameEmpty && (
+          <p className="text-xs text-destructive text-center">
+            {t.display_name_required || 'Please enter your name to continue'}
+          </p>
+        )}
+
+        {/* Device controls — icon row with inline dropdown */}
+        <div className="w-full flex justify-around items-start">
           {testState === 'idle' && (
             <Button
               variant="outline"
@@ -368,102 +385,7 @@ export function PreJoin({
           </Select>
         </div>
 
-        {/* Display name input */}
-        <div className="w-full">
-          <Input
-            value={displayName}
-            onChange={(e) => setDisplayName(e.target.value)}
-            placeholder={t.display_name_placeholder || 'Your name'}
-            className="text-center h-9 text-sm"
-          />
-        </div>
-
-        {/* Display name required warning */}
-        {isDisplayNameEmpty && (
-          <p className="text-xs text-destructive text-center">
-            {t.display_name_required || 'Please enter your name to continue'}
-          </p>
-        )}
-
-        {/* Join buttons */}
-        <div className="w-full flex gap-2 pt-1">
-          <Button
-            onClick={() => handleJoinClick('voice')}
-            disabled={isJoinDisabled || isLoading}
-            className="flex-1"
-            size="default"
-          >
-            {t.join_voice || 'Join voice'}
-          </Button>
-          <Button
-            onClick={() => handleJoinClick('video')}
-            disabled={isJoinDisabled || isLoading}
-            className="flex-1"
-            size="default"
-          >
-            {t.join_video || 'Join video'}
-          </Button>
-        </div>
-
-        {/* Cancel */}
-        <Button onClick={onCancel} variant="ghost" size="sm" className="w-full">
-          {t.cancel || 'Cancel'}
-        </Button>
-
-        {/* Powered by footer - mobile */}
-        {localUser.isGuest && (
-          <div className="text-xs text-muted-foreground mt-2">
-            {t.powered_by || 'Powered by Vortex CX'}
-          </div>
-        )}
-      </div>
-
-      {/* Desktop layout (md+) */}
-      <div className="hidden md:flex max-w-4xl mx-auto w-full h-full items-center justify-center gap-12">
-        {/* LEFT: Camera preview + controls */}
-        <div className="flex-1 flex flex-col items-center gap-6">
-          {/* Logo */}
-          {tenantBranding.logoUrl && (
-            <div className="absolute top-6 left-6">
-              <img src={tenantBranding.logoUrl} alt="Tenant logo" className="h-10" />
-            </div>
-          )}
-
-          {/* Large camera preview */}
-          <div className="w-96 h-96 rounded-2xl bg-muted border-4 border-border overflow-hidden flex items-center justify-center relative">
-            {cameraEnabled ? (
-              <div className="w-full h-full relative">
-                <video
-                  ref={videoPreviewRef}
-                  className="w-full h-full object-cover"
-                  autoPlay
-                  muted
-                  playsInline
-                />
-                {/* Simulated camera preview overlay */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
-                  <div className="text-8xl font-bold text-foreground/80">
-                    {displayName.charAt(0).toUpperCase() || '?'}
-                  </div>
-                </div>
-                {/* Camera active indicator */}
-                <div className="absolute top-4 right-4 flex items-center gap-2 bg-black/50 px-3 py-1.5 rounded-full">
-                  <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                  <span className="text-xs text-white">{t.camera_on || 'Camera on'}</span>
-                </div>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center w-full h-full bg-muted gap-2">
-                <VideoOff className="w-16 h-16 text-muted-foreground" />
-                <div className="text-7xl font-bold text-muted-foreground">
-                  {displayName.charAt(0).toUpperCase() || '?'}
-                </div>
-                <span className="text-sm text-muted-foreground">{t.camera_off || 'Camera off'}</span>
-              </div>
-            )}
-          </div>
-
-          {/* Test mic/speaker buttons */}
+        {/* Test mic/speaker buttons */}
           <div className="w-80 flex gap-2">
             {testState === 'idle' && (
               <Button
