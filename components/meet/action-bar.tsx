@@ -118,17 +118,21 @@ export function ActionBar({
 
   const handleStartScreenShare = async () => {
     try {
+      console.log('[v0] Starting screen share - calling getDisplayMedia')
       const stream = await navigator.mediaDevices.getDisplayMedia({
         video: { displaySurface: 'monitor' } as MediaTrackConstraints,
         audio: true,
       })
+      console.log('[v0] Screen share stream obtained:', stream.id)
       // When the user stops sharing via the browser's native stop button
       stream.getVideoTracks()[0].addEventListener('ended', () => {
+        console.log('[v0] Screen share stopped by user')
         onStopScreenShare()
       })
       onStartScreenShare(stream)
-    } catch {
-      // User cancelled the picker — do nothing
+    } catch (error) {
+      console.log('[v0] Screen share error:', error instanceof Error ? error.message : error)
+      // User cancelled the picker or error occurred — do nothing
     }
   }
 
