@@ -341,7 +341,7 @@ export default function MeetPage() {
       />
 
       {/* Debug controls floating widget */}
-      <div className="fixed top-4 right-4 bg-slate-900/95 text-white rounded-lg shadow-lg z-50 max-w-sm text-xs">
+      <div className="fixed bottom-4 left-4 bg-slate-900/95 text-white rounded-lg shadow-lg z-40 max-w-sm text-xs">
         <button
           onClick={() => setControlsMinimized(!controlsMinimized)}
           className="w-full flex items-center justify-between px-4 py-3 hover:bg-slate-800 rounded-lg transition-colors"
