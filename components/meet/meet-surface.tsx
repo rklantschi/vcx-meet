@@ -99,6 +99,7 @@ export function MeetSurface({
   onSendNudge,
   onToggleMic = () => {},
   onToggleCamera = () => {},
+  onToggleSpeaker = () => {},
   onSwitchMic = () => {},
   onSwitchCamera = () => {},
   onSwitchSpeaker = () => {},
