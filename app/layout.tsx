@@ -7,8 +7,8 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'MeetFlow - Video Conferencing',
-  description: 'Professional video conferencing and collaboration platform',
+  title: 'Vortex CX Meet - Video Conferencing',
+  description: 'WhatsApp-style minimal video conferencing surface for Vortex CX',
   generator: 'v0.app',
   icons: {
     icon: [
