@@ -230,20 +230,6 @@ export function PreJoin({
           </Alert>
         )}
 
-        {/* Mic level indicator */}
-        <div className="w-full space-y-1">
-          <div className="flex items-center justify-between text-xs text-muted-foreground">
-            <span>{t.microphone_level || 'Microphone level'}</span>
-            <span>{micEnabled ? `${Math.round(micLevel)}%` : t.muted || 'Muted'}</span>
-          </div>
-          <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-accent rounded-full transition-all duration-75"
-              style={{ width: `${micLevel}%` }}
-            />
-          </div>
-        </div>
-
         {/* Test mic/speaker buttons */}
         <div className="w-full flex gap-2">
           {testState === 'idle' && (
@@ -475,20 +461,6 @@ export function PreJoin({
                 <span className="text-sm text-muted-foreground">{t.camera_off || 'Camera off'}</span>
               </div>
             )}
-          </div>
-
-          {/* Mic level indicator */}
-          <div className="w-80 space-y-2">
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <span>{t.microphone_level || 'Microphone level'}</span>
-              <span>{micEnabled ? `${Math.round(micLevel)}%` : t.muted || 'Muted'}</span>
-            </div>
-            <div className="h-2 bg-muted rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-accent rounded-full transition-all duration-75"
-                style={{ width: `${micLevel}%` }}
-              />
-            </div>
           </div>
 
           {/* Test mic/speaker buttons */}
