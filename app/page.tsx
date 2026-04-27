@@ -72,6 +72,7 @@ export default function MeetPage() {
   const [captionLines, setCaptionLines] = useState<CaptionLine[]>([])
   const [micOn, setMicOn] = useState(true)
   const [cameraOn, setCameraOn] = useState(true)
+  const [controlsMinimized, setControlsMinimized] = useState(false)
 
   // Meeting data
   const demoMeeting = {
@@ -318,8 +319,16 @@ export default function MeetPage() {
       />
 
       {/* Debug controls floating widget */}
-      <div className="fixed top-4 right-4 bg-slate-900/95 text-white p-4 rounded-lg shadow-lg max-h-[calc(100vh-2rem)] overflow-y-auto z-50 max-w-sm space-y-2 text-xs">
-        <div className="font-bold text-sm mb-3">🔧 Demo Controls</div>
+      <div className="fixed top-4 right-4 bg-slate-900/95 text-white rounded-lg shadow-lg z-50 max-w-sm text-xs">
+        <button
+          onClick={() => setControlsMinimized(!controlsMinimized)}
+          className="w-full flex items-center justify-between px-4 py-3 hover:bg-slate-800 rounded-lg transition-colors"
+        >
+          <span className="font-bold text-sm">Demo Controls</span>
+          <span className="text-slate-400 text-xs">{controlsMinimized ? '▲ expand' : '▼ minimize'}</span>
+        </button>
+
+        {!controlsMinimized && <div className="px-4 pb-4 space-y-2 max-h-[calc(100vh-6rem)] overflow-y-auto">
 
         {/* State switcher */}
         <div className="space-y-1">
@@ -488,6 +497,7 @@ export default function MeetPage() {
           />
           <span>Is Initiator</span>
         </label>
+        </div>}
       </div>
     </div>
   )
