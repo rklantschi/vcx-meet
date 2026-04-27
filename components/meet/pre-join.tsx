@@ -476,62 +476,35 @@ export function PreJoin({
 
           {/* Controls below preview */}
           <div className="flex flex-col items-center gap-4 w-full">
-            {/* Device controls row */}
-            <div className="flex items-center justify-center gap-6 w-full max-w-2xl">
-              {/* Microphone */}
-              <div className="flex-1 flex flex-col items-center gap-3 p-4 rounded-xl bg-muted/50 border border-border/50">
-                <SplitButtonControl
-                  type="mic"
-                  isOn={micEnabled}
-                  devices={availableDevices.mics}
-                  selectedDeviceId={micId}
-                  onToggle={() => setMicEnabled(!micEnabled)}
-                  onSwitchDevice={setMicId}
-                  label={t.microphone || 'Microphone'}
-                />
-                <div className="text-center w-full">
-                  <p className="text-xs font-medium text-muted-foreground">{t.microphone || 'Microphone'}</p>
-                  <p className="text-sm text-foreground truncate mt-1">
-                    {availableDevices.mics.find(m => m.id === micId)?.label || 'Not selected'}
-                  </p>
-                </div>
-              </div>
+            {/* Device controls row - compact icon buttons only */}
+            <div className="flex items-center justify-center gap-3 w-full max-w-2xl">
+              <SplitButtonControl
+                type="mic"
+                isOn={micEnabled}
+                devices={availableDevices.mics}
+                selectedDeviceId={micId}
+                onToggle={() => setMicEnabled(!micEnabled)}
+                onSwitchDevice={setMicId}
+                label={t.microphone || 'Microphone'}
+              />
 
-              {/* Camera */}
-              <div className="flex-1 flex flex-col items-center gap-3 p-4 rounded-xl bg-muted/50 border border-border/50">
-                <SplitButtonControl
-                  type="camera"
-                  isOn={cameraEnabled}
-                  devices={availableDevices.cameras}
-                  selectedDeviceId={cameraId}
-                  onToggle={() => setCameraEnabled(!cameraEnabled)}
-                  onSwitchDevice={setCameraId}
-                  label={t.camera || 'Camera'}
-                />
-                <div className="text-center w-full">
-                  <p className="text-xs font-medium text-muted-foreground">{t.camera || 'Camera'}</p>
-                  <p className="text-sm text-foreground truncate mt-1">
-                    {availableDevices.cameras.find(c => c.id === cameraId)?.label || 'Not selected'}
-                  </p>
-                </div>
-              </div>
+              <SplitButtonControl
+                type="camera"
+                isOn={cameraEnabled}
+                devices={availableDevices.cameras}
+                selectedDeviceId={cameraId}
+                onToggle={() => setCameraEnabled(!cameraEnabled)}
+                onSwitchDevice={setCameraId}
+                label={t.camera || 'Camera'}
+              />
 
-              {/* Speaker */}
-              <div className="flex-1 flex flex-col items-center gap-3 p-4 rounded-xl bg-muted/50 border border-border/50">
-                <SplitButtonControl
-                  type="speaker"
-                  devices={availableDevices.speakers}
-                  selectedDeviceId={speakerId}
-                  onSwitchDevice={setSpeakerId}
-                  label={t.speaker || 'Speaker'}
-                />
-                <div className="text-center w-full">
-                  <p className="text-xs font-medium text-muted-foreground">{t.speaker || 'Speaker'}</p>
-                  <p className="text-sm text-foreground truncate mt-1">
-                    {availableDevices.speakers.find(s => s.id === speakerId)?.label || 'Not selected'}
-                  </p>
-                </div>
-              </div>
+              <SplitButtonControl
+                type="speaker"
+                devices={availableDevices.speakers}
+                selectedDeviceId={speakerId}
+                onSwitchDevice={setSpeakerId}
+                label={t.speaker || 'Speaker'}
+              />
             </div>
 
             {/* Test mic */}
@@ -583,7 +556,7 @@ export function PreJoin({
 
           {/* Meeting info */}
           <div>
-            <h1 className="text-4xl font-bold text-foreground text-pretty leading-tight">
+            <h1 className="text-2xl font-bold text-foreground text-pretty leading-tight">
               {meeting.title || t.meeting_title || 'Join Meeting'}
             </h1>
             {scheduledTime && (
