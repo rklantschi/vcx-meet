@@ -96,11 +96,18 @@ export function VideoTile({ participant, isLocal = false, allowRotate = false }:
 
 interface AudioTileProps {
   participant: ParticipantTile
+  allowRotate?: boolean
 }
 
-export function AudioTile({ participant }: AudioTileProps) {
+export function AudioTile({ participant, allowRotate = false }: AudioTileProps) {
+  const [isPortrait, setIsPortrait] = useState(false)
+
   return (
-    <div className="relative w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg overflow-hidden flex flex-col items-center justify-center gap-4 p-4 animate-in fade-in scale-in duration-300">
+    <div
+      className={`relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg overflow-hidden flex flex-col items-center justify-center gap-4 p-4 animate-in fade-in scale-in duration-300 transition-all group ${
+        allowRotate && isPortrait ? 'w-auto h-full aspect-[9/16] mx-auto' : 'w-full h-full'
+      }`}
+    >
       {/* Avatar */}
       {participant.avatar ? (
         <img src={participant.avatar} alt={participant.displayName} className="w-20 h-20 rounded-full" />
@@ -143,6 +150,17 @@ export function AudioTile({ participant }: AudioTileProps) {
           </>
         )}
       </div>
+
+      {/* Rotate button */}
+      {allowRotate && (
+        <button
+          onClick={() => setIsPortrait(p => !p)}
+          className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 hover:bg-black/80 p-1.5 rounded-full"
+          title={isPortrait ? 'Switch to landscape' : 'Switch to portrait'}
+        >
+          <RotateCcw className={`w-3.5 h-3.5 text-white transition-transform ${isPortrait ? 'rotate-90' : ''}`} />
+        </button>
+      )}
     </div>
   )
 }

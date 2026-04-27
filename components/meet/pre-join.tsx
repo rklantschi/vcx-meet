@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { AlertCircle, Volume2, Play, Mic, VideoOff } from 'lucide-react'
+import { AlertCircle, Volume2, Play, Mic, VideoOff, RotateCcw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -65,6 +65,7 @@ export function PreJoin({
   const [testState, setTestState] = useState<'idle' | 'recording' | 'recorded' | 'playing'>('idle')
 
   const videoPreviewRef = useRef<HTMLVideoElement>(null)
+  const [previewPortrait, setPreviewPortrait] = useState(false)
   const micAnimationRef = useRef<number | null>(null)
   const testRecordingTimerRef = useRef<NodeJS.Timeout | null>(null)
 
@@ -395,8 +396,14 @@ export function PreJoin({
 
         {/* LEFT: Camera preview — takes majority of space */}
         <div className="flex-1 flex flex-col items-center justify-center p-8 gap-6">
-          {/* Large preview box */}
-          <div className="w-full max-w-2xl aspect-video rounded-3xl bg-muted border border-border overflow-hidden flex items-center justify-center relative shadow-lg">
+          {/* Large preview box — aspect ratio switches on rotate */}
+          <div
+            className={`rounded-3xl bg-muted border border-border overflow-hidden flex items-center justify-center relative shadow-lg group transition-all duration-300 ${
+              previewPortrait
+                ? 'h-full max-h-[70vh] aspect-[9/16]'
+                : 'w-full max-w-2xl aspect-video'
+            }`}
+          >
             {cameraEnabled ? (
               <div className="w-full h-full relative">
                 <video
@@ -426,6 +433,16 @@ export function PreJoin({
                 <span className="text-sm text-muted-foreground">{t.camera_off || 'Camera off'}</span>
               </div>
             )}
+
+            {/* Rotate toggle button */}
+            <button
+              onClick={() => setPreviewPortrait(p => !p)}
+              className="absolute top-3 left-3 opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 hover:bg-black/80 px-2.5 py-1.5 rounded-full flex items-center gap-1.5"
+              title={previewPortrait ? 'Switch to landscape' : 'Switch to portrait'}
+            >
+              <RotateCcw className={`w-3.5 h-3.5 text-white transition-transform duration-300 ${previewPortrait ? 'rotate-90' : ''}`} />
+              <span className="text-xs text-white">{previewPortrait ? 'Landscape' : 'Portrait'}</span>
+            </button>
           </div>
 
           {/* Controls below preview */}

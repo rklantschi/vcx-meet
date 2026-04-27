@@ -220,7 +220,7 @@ export function Canvas({
               {regularParticipants.map((participant) => (
                 <div key={participant.id} className="w-full h-full min-h-0 flex items-center justify-center">
                   {isAudioOnly || !participant.hasVideoTrack ? (
-                    <AudioTile participant={participant} />
+                    <AudioTile participant={participant} allowRotate={!isMobile} />
                   ) : (
                     <VideoTile
                       participant={participant}
