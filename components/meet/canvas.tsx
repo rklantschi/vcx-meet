@@ -31,7 +31,10 @@ export function Canvas({
   const [pipPosition, setPipPosition] = useState<'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'>('bottom-right')
   const [isLandscape, setIsLandscape] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  // layoutMode: 'grid' | 'spotlight'
+  // spotlightMode: 'follow' (auto-follows speaker) | 'pinned' (locked to one person)
   const [layoutMode, setLayoutMode] = useState<'grid' | 'spotlight'>('grid')
+  const [spotlightMode, setSpotlightMode] = useState<'follow' | 'pinned'>('follow')
   const [pinnedParticipantId, setPinnedParticipantId] = useState<string | null>(null)
 
   useEffect(() => {
@@ -74,25 +77,35 @@ export function Canvas({
   // Filter out screen share participants from regular grid
   const regularParticipants = allParticipants.filter((p) => !p.sharingScreen)
 
-  // Handle tile click for pinning
+  // Click on a tile in grid → go to spotlight+pinned
+  // Click on a thumbnail in spotlight → pin that person
+  // Click on the main (maximized) tile when pinned → unpin (back to follow-speaker)
   const handleTileClick = (participantId: string) => {
-    if (pinnedParticipantId === participantId) {
-      // Unpin if already pinned
-      setPinnedParticipantId(null)
-      setLayoutMode('grid')
-    } else {
-      // Pin this participant
+    if (layoutMode === 'grid') {
+      // Enter spotlight and pin this participant
       setPinnedParticipantId(participantId)
+      setSpotlightMode('pinned')
       setLayoutMode('spotlight')
+    } else if (layoutMode === 'spotlight') {
+      const isMainTile = spotlightParticipant?.id === participantId
+      if (isMainTile && spotlightMode === 'pinned') {
+        // Unpin — stay in spotlight but follow speaker
+        setPinnedParticipantId(null)
+        setSpotlightMode('follow')
+      } else if (!isMainTile) {
+        // Pin a thumbnail participant
+        setPinnedParticipantId(participantId)
+        setSpotlightMode('pinned')
+      }
     }
   }
 
   // Get the spotlighted participant (pinned or current speaker)
   const getSpotlightParticipant = () => {
-    if (pinnedParticipantId) {
+    if (spotlightMode === 'pinned' && pinnedParticipantId) {
       return regularParticipants.find(p => p.id === pinnedParticipantId) || regularParticipants[0]
     }
-    // Find the currently speaking participant
+    // Follow-speaker mode: find currently speaking participant
     const speaker = regularParticipants.find(p => p.isSpeaking)
     return speaker || regularParticipants[0]
   }
@@ -126,9 +139,14 @@ export function Canvas({
           <button
             onClick={() => {
               if (layoutMode === 'grid') {
+                // Grid → Spotlight follow-speaker
                 setLayoutMode('spotlight')
+                setSpotlightMode('follow')
+                setPinnedParticipantId(null)
               } else {
+                // Any spotlight → Grid
                 setLayoutMode('grid')
+                setSpotlightMode('follow')
                 setPinnedParticipantId(null)
               }
             }}
@@ -352,24 +370,24 @@ export function Canvas({
                   <AudioTile 
                     participant={spotlightParticipant}
                     isSpeaking={spotlightParticipant.isSpeaking}
-                    isPinned={pinnedParticipantId === spotlightParticipant.id}
+                    isPinned={spotlightMode === 'pinned'}
                     onClick={() => handleTileClick(spotlightParticipant.id)}
                   />
                 ) : (
                   <VideoTile 
                     participant={spotlightParticipant}
                     isSpeaking={spotlightParticipant.isSpeaking}
-                    isPinned={pinnedParticipantId === spotlightParticipant.id}
+                    isPinned={spotlightMode === 'pinned'}
                     onClick={() => handleTileClick(spotlightParticipant.id)}
                   />
                 )}
-                {/* Pinned indicator */}
-                {pinnedParticipantId === spotlightParticipant.id && (
-                  <div className="absolute top-2 left-2 bg-primary/90 px-2 py-1 rounded-full flex items-center gap-1">
-                    <Pin className="w-3 h-3 text-primary-foreground" />
-                    <span className="text-xs text-primary-foreground font-medium">Pinned</span>
-                  </div>
-                )}
+                {/* Status badge */}
+                <div className="absolute top-2 left-2 bg-black/60 px-2 py-1 rounded-full flex items-center gap-1 pointer-events-none">
+                  <Pin className={`w-3 h-3 ${spotlightMode === 'pinned' ? 'text-primary' : 'text-slate-400'}`} />
+                  <span className="text-xs text-white font-medium">
+                    {spotlightMode === 'pinned' ? 'Pinned — click to unpin' : 'Following speaker'}
+                  </span>
+                </div>
               </div>
             </div>
           ) : (
@@ -382,7 +400,7 @@ export function Canvas({
                     participant={spotlightParticipant}
                     allowRotate={!isMobile}
                     isSpeaking={spotlightParticipant.isSpeaking}
-                    isPinned={pinnedParticipantId === spotlightParticipant.id}
+                    isPinned={spotlightMode === 'pinned'}
                     onClick={() => handleTileClick(spotlightParticipant.id)}
                   />
                 ) : (
@@ -390,17 +408,17 @@ export function Canvas({
                     participant={spotlightParticipant}
                     allowRotate={!isMobile}
                     isSpeaking={spotlightParticipant.isSpeaking}
-                    isPinned={pinnedParticipantId === spotlightParticipant.id}
+                    isPinned={spotlightMode === 'pinned'}
                     onClick={() => handleTileClick(spotlightParticipant.id)}
                   />
                 )}
-                {/* Pinned indicator */}
-                {pinnedParticipantId === spotlightParticipant.id && (
-                  <div className="absolute top-2 left-2 bg-primary/90 px-2 py-1 rounded-full flex items-center gap-1">
-                    <Pin className="w-3 h-3 text-primary-foreground" />
-                    <span className="text-xs text-primary-foreground font-medium">Pinned</span>
-                  </div>
-                )}
+                {/* Status badge */}
+                <div className="absolute top-2 left-2 bg-black/60 px-2 py-1 rounded-full flex items-center gap-1 pointer-events-none">
+                  <Pin className={`w-3 h-3 ${spotlightMode === 'pinned' ? 'text-primary' : 'text-slate-400'}`} />
+                  <span className="text-xs text-white font-medium">
+                    {spotlightMode === 'pinned' ? 'Pinned — click to unpin' : 'Following speaker'}
+                  </span>
+                </div>
               </div>
               {/* Thumbnail strip - vertical scrollable on side */}
               <div className="w-24 flex-shrink-0 flex flex-col gap-1 overflow-y-auto">

@@ -26,6 +26,7 @@ export function VideoTile({ participant, isLocal = false, allowRotate = false, i
         allowRotate && isPortrait ? 'w-auto h-full aspect-[9/16] mx-auto' : 'w-full h-full'
       } ${isSpeaking ? 'ring-2 ring-emerald-400' : ''} ${isPinned ? 'ring-2 ring-primary' : ''}`}
       onClick={onClick}
+      title={compact ? participant.displayName : undefined}
     >
       {/* Video placeholder */}
       <div className="w-full h-full bg-gradient-to-br from-slate-900 to-black flex items-center justify-center">
@@ -41,8 +42,12 @@ export function VideoTile({ participant, isLocal = false, allowRotate = false, i
         </div>
       </div>
 
-      {/* Display name overlay - only in non-compact mode */}
-      {!compact && (
+      {/* Display name overlay */}
+      {compact ? (
+        <div className="absolute bottom-0 left-0 right-0 bg-black/70 px-1.5 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <p className="text-white text-xs font-medium truncate">{participant.displayName}</p>
+        </div>
+      ) : (
         <div className="absolute bottom-2 left-2 bg-black/60 px-2 py-1 rounded text-xs text-white font-medium flex items-center gap-1">
           <span>{participant.displayName}</span>
           {participant.isInitiator && <span className="text-amber-400">•</span>}
@@ -120,6 +125,7 @@ export function AudioTile({ participant, allowRotate = false, isPinned = false, 
       } ${allowRotate && isPortrait ? 'w-auto h-full aspect-[9/16] mx-auto' : 'w-full h-full'
       } ${isSpeaking ? 'border-emerald-400 ring-2 ring-emerald-400' : 'border-slate-700/50'} ${isPinned ? 'border-primary ring-2 ring-primary' : ''}`}
       onClick={onClick}
+      title={compact ? participant.displayName : undefined}
     >
       {/* Audio-only badge - only in non-compact */}
       {!compact && (
@@ -138,8 +144,12 @@ export function AudioTile({ participant, allowRotate = false, isPinned = false, 
         </div>
       )}
 
-      {/* Display name - only in non-compact */}
-      {!compact && (
+      {/* Display name */}
+      {compact ? (
+        <div className="absolute bottom-0 left-0 right-0 bg-black/70 px-1.5 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <p className="text-white text-xs font-medium truncate">{participant.displayName}</p>
+        </div>
+      ) : (
         <div className="text-center">
           <p className="text-sm text-slate-100 font-medium">{participant.displayName}</p>
           {participant.isInitiator && <p className="text-xs text-amber-400 mt-0.5">Initiator</p>}
