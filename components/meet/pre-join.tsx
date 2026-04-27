@@ -156,7 +156,7 @@ export function PreJoin({
       {/* Mobile layout (< md) */}
       <div className="md:hidden w-full max-w-md flex flex-col items-center gap-3 my-auto py-4">
         {/* Camera preview */}
-        <div className="w-24 h-24 rounded-xl bg-muted border-2 border-border overflow-hidden flex items-center justify-center relative">
+        <div className="w-40 h-40 rounded-xl bg-muted border-2 border-border overflow-hidden flex items-center justify-center relative">
           {cameraEnabled ? (
             <div className="w-full h-full relative">
               <video
@@ -168,17 +168,17 @@ export function PreJoin({
               />
               {/* Simulated camera preview overlay */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
-                <div className="text-2xl font-bold text-foreground/80">
+                <div className="text-4xl font-bold text-foreground/80">
                   {displayName.charAt(0).toUpperCase() || '?'}
                 </div>
               </div>
               {/* Camera active indicator */}
-              <div className="absolute top-1 right-1 w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-green-500 animate-pulse" />
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center w-full h-full bg-muted">
-              <VideoOff className="w-6 h-6 text-muted-foreground mb-1" />
-              <div className="text-xl font-bold text-muted-foreground">
+            <div className="flex flex-col items-center justify-center w-full h-full bg-muted gap-2">
+              <VideoOff className="w-8 h-8 text-muted-foreground" />
+              <div className="text-2xl font-bold text-muted-foreground">
                 {displayName.charAt(0).toUpperCase() || '?'}
               </div>
             </div>
@@ -430,7 +430,7 @@ export function PreJoin({
           )}
 
           {/* Large camera preview */}
-          <div className="w-80 h-80 rounded-2xl bg-muted border-4 border-border overflow-hidden flex items-center justify-center relative">
+          <div className="w-96 h-96 rounded-2xl bg-muted border-4 border-border overflow-hidden flex items-center justify-center relative">
             {cameraEnabled ? (
               <div className="w-full h-full relative">
                 <video
@@ -442,20 +442,20 @@ export function PreJoin({
                 />
                 {/* Simulated camera preview overlay */}
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
-                  <div className="text-7xl font-bold text-foreground/80">
+                  <div className="text-8xl font-bold text-foreground/80">
                     {displayName.charAt(0).toUpperCase() || '?'}
                   </div>
                 </div>
                 {/* Camera active indicator */}
-                <div className="absolute top-3 right-3 flex items-center gap-2 bg-black/50 px-2 py-1 rounded-full">
+                <div className="absolute top-4 right-4 flex items-center gap-2 bg-black/50 px-3 py-1.5 rounded-full">
                   <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                   <span className="text-xs text-white">{t.camera_on || 'Camera on'}</span>
                 </div>
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center w-full h-full bg-muted gap-2">
-                <VideoOff className="w-12 h-12 text-muted-foreground" />
-                <div className="text-6xl font-bold text-muted-foreground">
+                <VideoOff className="w-16 h-16 text-muted-foreground" />
+                <div className="text-7xl font-bold text-muted-foreground">
                   {displayName.charAt(0).toUpperCase() || '?'}
                 </div>
                 <span className="text-sm text-muted-foreground">{t.camera_off || 'Camera off'}</span>
