@@ -369,15 +369,17 @@ export function ActionBar({
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Leave button */}
-          <Button
-            variant="destructive"
-            size="icon"
-            className="rounded-full"
-            onClick={onLeave}
-          >
-            <PhoneOff className="w-5 h-5" />
-          </Button>
+          {/* Leave button — hidden when side panel toggle is shown */}
+          {!showSidePanelToggle && (
+            <Button
+              variant="destructive"
+              size="icon"
+              className="rounded-full"
+              onClick={onLeave}
+            >
+              <PhoneOff className="w-5 h-5" />
+            </Button>
+          )}
         </div>
       </div>
 
