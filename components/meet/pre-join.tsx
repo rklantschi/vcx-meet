@@ -534,15 +534,17 @@ export function PreJoin({
           <Button onClick={onCancel} variant="ghost" className="-mt-2">
             {t.cancel || 'Cancel'}
           </Button>
+
+          {/* Tenant branding footer - desktop only */}
+          {localUser.isGuest && (
+            <div className="text-xs text-muted-foreground">
+              {t.powered_by || 'Powered by Vortex CX'}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Tenant branding footer - desktop only */}
-      {localUser.isGuest && (
-        <div className="hidden md:block absolute bottom-6 text-xs text-muted-foreground">
-          {t.powered_by || 'Powered by Vortex CX'}
-        </div>
-      )}
+      {/* Footer end */}
     </div>
   )
 }
