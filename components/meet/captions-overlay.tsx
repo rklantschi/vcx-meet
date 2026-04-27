@@ -63,16 +63,15 @@ export function CaptionsOverlay({ lines, isEnabled, t }: CaptionsOverlayProps) {
   return (
     <div className="absolute bottom-0 left-0 right-0 z-40 flex justify-center px-2 sm:px-4 pointer-events-none pb-20 sm:pb-24">
       <div className="max-w-sm sm:max-w-3xl w-full">
-        <div className="bg-black/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-xs sm:text-sm leading-relaxed">
-          {displayLines.map((line, i) => (
-            <span
+        <div className="bg-black/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-xs sm:text-sm leading-relaxed space-y-1">
+          {displayLines.map((line) => (
+            <div
               key={line.id}
               className={`transition-opacity duration-500 ${line.isFading ? 'opacity-0' : 'opacity-100'}`}
             >
-              {i > 0 && ' '}
               <span className="font-semibold text-amber-300">{line.speakerName}:</span>{' '}
               <span className="font-normal">{line.text}</span>
-            </span>
+            </div>
           ))}
         </div>
       </div>
