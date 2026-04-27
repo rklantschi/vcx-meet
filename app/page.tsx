@@ -132,6 +132,7 @@ export default function MeetPage() {
         tenantBranding={demoTenantBranding}
         availableDevices={demoAvailableDevices}
         otherParty={appState === 'pre-join' && meetingState === 'waiting-for-other' ? demoOtherParty : undefined}
+        captionLines={[]}
         onJoin={(params) => {
           console.log('Join:', params)
           setAppState('in-meeting')
