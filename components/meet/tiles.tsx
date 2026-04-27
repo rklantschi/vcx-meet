@@ -48,9 +48,8 @@ export function VideoTile({ participant, isLocal = false, allowRotate = false, i
           <p className="text-white text-xs font-medium truncate">{participant.displayName}</p>
         </div>
       ) : (
-        <div className="absolute bottom-2 left-2 bg-black/60 px-2 py-1 rounded text-xs text-white font-medium flex items-center gap-1">
-          <span>{participant.displayName}</span>
-          {participant.isInitiator && <span className="text-amber-400">•</span>}
+        <div className="absolute bottom-2 left-2 flex items-center gap-1">
+          {participant.isInitiator && <span className="text-amber-400 text-xs">•</span>}
         </div>
       )}
 
