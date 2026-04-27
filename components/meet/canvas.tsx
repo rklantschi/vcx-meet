@@ -125,8 +125,8 @@ export function Canvas({
         </div>
       )}
 
-      {/* Recording + captions + connection quality + layout toggle */}
-      <div className="absolute top-4 right-4 flex items-center gap-2 z-50">
+      {/* Recording + layout toggle - stacked vertically */}
+      <div className="absolute top-4 right-4 flex flex-col gap-2 z-50">
         {/* Layout toggle (only show for 3+ participants) */}
         {participantCount >= 3 && !remoteScreenShare && (
           <button
@@ -158,13 +158,11 @@ export function Canvas({
           </button>
         )}
         {recordingActive && (
-          <div className="flex items-center gap-1.5 bg-black/60 px-2.5 py-1.5 rounded-full animate-pulse">
-            <Circle className="w-2.5 h-2.5 text-red-500 fill-red-500" />
+          <div className="flex items-center gap-1.5 bg-red-600/90 px-2.5 py-1.5 rounded-full animate-pulse">
+            <Circle className="w-2.5 h-2.5 text-red-200 fill-red-200" />
             <span className="text-xs text-white font-medium">Rec</span>
           </div>
         )}
-        {/* Connection quality */}
-        <div className="w-2 h-2 rounded-full bg-green-500" title="Connection quality: good" />
       </div>
 
       {/* Screen share layout - full size screen with tiles on side */}
