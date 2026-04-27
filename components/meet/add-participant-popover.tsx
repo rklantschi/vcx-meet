@@ -30,7 +30,7 @@ export function AddParticipantPopover({
   const [searchQuery, setSearchQuery] = useState('')
   const [copied, setCopied] = useState(false)
 
-  const filteredUsers = internalUsers.filter((user) =>
+  const filteredUsers = (internalUsers || []).filter((user) =>
     user.displayName.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
