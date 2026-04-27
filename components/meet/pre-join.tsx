@@ -1,17 +1,11 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { Mic, MicOff, Video, VideoOff, ChevronDown, AlertCircle, Volume2, Play } from 'lucide-react'
+import { AlertCircle, Volume2, Play, Mic, VideoOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+import { SplitButtonControl } from '@/components/meet/split-button-control'
 import type {
   AvailableDevices,
   JoinParams,
@@ -314,75 +308,39 @@ export function PreJoin({
           )}
         </div>
 
-        {/* Device controls — icon row with inline dropdown */}
-        <div className="w-full flex justify-around items-start">
-          {/* Microphone */}
-          <Select value={micId} onValueChange={setMicId}>
-            <div className="flex flex-col items-center gap-1">
-              <div className="flex items-end">
-                <button
-                  onClick={() => setMicEnabled(!micEnabled)}
-                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${micEnabled ? 'bg-muted hover:bg-muted-foreground/20' : 'bg-destructive/15 hover:bg-destructive/25'}`}
-                >
-                  {micEnabled ? <Mic className="w-4 h-4 text-foreground" /> : <MicOff className="w-4 h-4 text-destructive" />}
-                </button>
-                <SelectTrigger className="w-4 h-4 p-0 border-0 shadow-none bg-transparent focus:ring-0 [&>svg]:hidden -ml-2 mb-0.5">
-                  <ChevronDown className="w-3 h-3 text-muted-foreground" />
-                </SelectTrigger>
-              </div>
-              <span className="text-[10px] text-muted-foreground">{t.microphone || 'Mic'}</span>
-            </div>
-            <SelectContent>
-              {availableDevices.mics.map((mic) => (
-                <SelectItem key={mic.id} value={mic.id}>{mic.label}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          {/* Camera */}
-          <Select value={cameraId} onValueChange={setCameraId}>
-            <div className="flex flex-col items-center gap-1">
-              <div className="flex items-end">
-                <button
-                  onClick={() => setCameraEnabled(!cameraEnabled)}
-                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${cameraEnabled ? 'bg-muted hover:bg-muted-foreground/20' : 'bg-destructive/15 hover:bg-destructive/25'}`}
-                >
-                  {cameraEnabled ? <Video className="w-4 h-4 text-foreground" /> : <VideoOff className="w-4 h-4 text-destructive" />}
-                </button>
-                <SelectTrigger className="w-4 h-4 p-0 border-0 shadow-none bg-transparent focus:ring-0 [&>svg]:hidden -ml-2 mb-0.5">
-                  <ChevronDown className="w-3 h-3 text-muted-foreground" />
-                </SelectTrigger>
-              </div>
-              <span className="text-[10px] text-muted-foreground">{t.camera || 'Camera'}</span>
-            </div>
-            <SelectContent>
-              {availableDevices.cameras.map((camera) => (
-                <SelectItem key={camera.id} value={camera.id}>{camera.label}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          {/* Speaker */}
-          <Select value={speakerId} onValueChange={setSpeakerId}>
-            <div className="flex flex-col items-center gap-1">
-              <div className="flex items-end">
-                <button
-                  className="w-10 h-10 rounded-full bg-muted hover:bg-muted-foreground/20 flex items-center justify-center transition-colors"
-                >
-                  <Volume2 className="w-4 h-4 text-foreground" />
-                </button>
-                <SelectTrigger className="w-4 h-4 p-0 border-0 shadow-none bg-transparent focus:ring-0 [&>svg]:hidden -ml-2 mb-0.5">
-                  <ChevronDown className="w-3 h-3 text-muted-foreground" />
-                </SelectTrigger>
-              </div>
-              <span className="text-[10px] text-muted-foreground">{t.speaker || 'Speaker'}</span>
-            </div>
-            <SelectContent>
-              {availableDevices.speakers.map((speaker) => (
-                <SelectItem key={speaker.id} value={speaker.id}>{speaker.label}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        {/* Device controls — same split-button as in-call */}
+        <div className="flex items-center justify-center gap-3">
+          <div className="flex flex-col items-center gap-1">
+            <SplitButtonControl
+              type="mic"
+              isOn={micEnabled}
+              devices={availableDevices.mics}
+              onToggle={() => setMicEnabled(!micEnabled)}
+              onSwitchDevice={setMicId}
+              label={t.microphone || 'Microphone'}
+            />
+            <span className="text-[10px] text-muted-foreground">{t.microphone || 'Mic'}</span>
+          </div>
+          <div className="flex flex-col items-center gap-1">
+            <SplitButtonControl
+              type="camera"
+              isOn={cameraEnabled}
+              devices={availableDevices.cameras}
+              onToggle={() => setCameraEnabled(!cameraEnabled)}
+              onSwitchDevice={setCameraId}
+              label={t.camera || 'Camera'}
+            />
+            <span className="text-[10px] text-muted-foreground">{t.camera || 'Camera'}</span>
+          </div>
+          <div className="flex flex-col items-center gap-1">
+            <SplitButtonControl
+              type="speaker"
+              devices={availableDevices.speakers}
+              onSwitchDevice={setSpeakerId}
+              label={t.speaker || 'Speaker'}
+            />
+            <span className="text-[10px] text-muted-foreground">{t.speaker || 'Speaker'}</span>
+          </div>
         </div>
 
         {/* Test mic/speaker buttons */}
@@ -452,31 +410,6 @@ export function PreJoin({
             )}
           </div>
 
-          {/* Device controls */}
-          <div className="flex gap-3">
-            <button
-              onClick={() => setMicEnabled(!micEnabled)}
-              className="w-12 h-12 rounded-full bg-muted hover:bg-muted-foreground/20 flex items-center justify-center transition-colors"
-              title={t.toggle_microphone || 'Toggle microphone'}
-            >
-              {micEnabled ? (
-                <Mic className="w-6 h-6 text-foreground" />
-              ) : (
-                <MicOff className="w-6 h-6 text-destructive" />
-              )}
-            </button>
-            <button
-              onClick={() => setCameraEnabled(!cameraEnabled)}
-              className="w-12 h-12 rounded-full bg-muted hover:bg-muted-foreground/20 flex items-center justify-center transition-colors"
-              title={t.toggle_camera || 'Toggle camera'}
-            >
-              {cameraEnabled ? (
-                <Video className="w-6 h-6 text-foreground" />
-              ) : (
-                <VideoOff className="w-6 h-6 text-destructive" />
-              )}
-            </button>
-          </div>
         </div>
 
         {/* RIGHT: Form */}
@@ -542,66 +475,38 @@ export function PreJoin({
             )}
           </div>
 
-          {/* Device pickers */}
-          <div className="space-y-3">
-            {/* Microphone select */}
-            <div>
-              <label className="text-sm font-medium text-muted-foreground mb-2 block flex items-center gap-2">
-                <Mic className="w-4 h-4" />
-                {t.microphone || 'Microphone'}
-              </label>
-              <Select value={micId} onValueChange={setMicId}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableDevices.mics.map((mic) => (
-                    <SelectItem key={mic.id} value={mic.id}>
-                      {mic.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          {/* Device controls — same split-button as in-call */}
+          <div className="flex items-center justify-center gap-4">
+            <div className="flex flex-col items-center gap-1">
+              <SplitButtonControl
+                type="mic"
+                isOn={micEnabled}
+                devices={availableDevices.mics}
+                onToggle={() => setMicEnabled(!micEnabled)}
+                onSwitchDevice={setMicId}
+                label={t.microphone || 'Microphone'}
+              />
+              <span className="text-xs text-muted-foreground">{t.microphone || 'Microphone'}</span>
             </div>
-
-            {/* Camera select */}
-            <div>
-              <label className="text-sm font-medium text-muted-foreground mb-2 block flex items-center gap-2">
-                <Video className="w-4 h-4" />
-                {t.camera || 'Camera'}
-              </label>
-              <Select value={cameraId} onValueChange={setCameraId}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableDevices.cameras.map((camera) => (
-                    <SelectItem key={camera.id} value={camera.id}>
-                      {camera.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="flex flex-col items-center gap-1">
+              <SplitButtonControl
+                type="camera"
+                isOn={cameraEnabled}
+                devices={availableDevices.cameras}
+                onToggle={() => setCameraEnabled(!cameraEnabled)}
+                onSwitchDevice={setCameraId}
+                label={t.camera || 'Camera'}
+              />
+              <span className="text-xs text-muted-foreground">{t.camera || 'Camera'}</span>
             </div>
-
-            {/* Speaker select */}
-            <div>
-              <label className="text-sm font-medium text-muted-foreground mb-2 block flex items-center gap-2">
-                <Volume2 className="w-4 h-4" />
-                {t.speaker || 'Speaker'}
-              </label>
-              <Select value={speakerId} onValueChange={setSpeakerId}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableDevices.speakers.map((speaker) => (
-                    <SelectItem key={speaker.id} value={speaker.id}>
-                      {speaker.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="flex flex-col items-center gap-1">
+              <SplitButtonControl
+                type="speaker"
+                devices={availableDevices.speakers}
+                onSwitchDevice={setSpeakerId}
+                label={t.speaker || 'Speaker'}
+              />
+              <span className="text-xs text-muted-foreground">{t.speaker || 'Speaker'}</span>
             </div>
           </div>
 
