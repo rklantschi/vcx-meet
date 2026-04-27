@@ -225,7 +225,6 @@ export function MeetSurface({
         meeting={meeting}
         tenantBranding={tenantBranding}
         onRejoin={onRejoin}
-        onSubmitFeedback={onSubmitFeedback}
         onReturn={onReturn}
         t={translations}
       />

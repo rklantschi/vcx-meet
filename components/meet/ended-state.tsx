@@ -1,17 +1,14 @@
 'use client'
 
-import { useState } from 'react'
-import { Star, MessageSquare } from 'lucide-react'
+import { MessageSquare } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
-import type { Meeting, TenantBranding, MeetingEndReason, FeedbackSubmission, TranslationStrings } from '@/types/meet'
+import type { Meeting, TenantBranding, MeetingEndReason, TranslationStrings } from '@/types/meet'
 
 interface EndedStateProps {
   endedReason: MeetingEndReason
   meeting: Meeting
   tenantBranding: TenantBranding
   onRejoin?: () => void
-  onSubmitFeedback: (feedback: FeedbackSubmission) => void
   onReturn: () => void
   t: TranslationStrings
 }
@@ -21,26 +18,9 @@ export function EndedState({
   meeting,
   tenantBranding,
   onRejoin,
-  onSubmitFeedback,
   onReturn,
   t,
 }: EndedStateProps) {
-  const [showFeedback, setShowFeedback] = useState(false)
-  const [rating, setRating] = useState(0)
-  const [comment, setComment] = useState('')
-  const [submittingFeedback, setSubmittingFeedback] = useState(false)
-
-  const handleSubmitFeedback = async () => {
-    setSubmittingFeedback(true)
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 500))
-      onSubmitFeedback({ rating, comment })
-      setShowFeedback(false)
-    } finally {
-      setSubmittingFeedback(false)
-    }
-  }
-
   const getHeadline = () => {
     switch (endedReason) {
       case 'left':
@@ -88,75 +68,20 @@ export function EndedState({
           {getDuration() && <p className="text-xs text-muted-foreground">{t.duration || 'Duration'}: {getDuration()}</p>}
         </div>
 
-        {/* Rejoin button */}
-        {meeting.isStillActive && onRejoin && (
-          <Button onClick={onRejoin} size="lg" className="w-full">
-            {t.rejoin || 'Rejoin'}
+        {/* Buttons */}
+        <div className="w-full flex flex-col gap-2">
+          {/* Rejoin button */}
+          {meeting.isStillActive && onRejoin && (
+            <Button onClick={onRejoin} size="lg" className="w-full">
+              {t.rejoin || 'Rejoin'}
+            </Button>
+          )}
+
+          {/* Close/Return button */}
+          <Button onClick={onReturn} variant="outline" size="lg" className="w-full">
+            {t.close || 'Close'}
           </Button>
-        )}
-
-        {/* Feedback form */}
-        {!showFeedback ? (
-          <Button
-            onClick={() => setShowFeedback(true)}
-            variant="outline"
-            className="w-full"
-          >
-            {t.leave_feedback || 'Leave feedback'}
-          </Button>
-        ) : (
-          <div className="w-full space-y-4 pt-4 border-t">
-            <div>
-              <p className="text-sm font-medium text-foreground mb-2">{t.rating || 'How was your experience?'}</p>
-              <div className="flex gap-2 justify-center">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    onClick={() => setRating(star)}
-                    className="text-2xl transition-colors"
-                  >
-                    <Star
-                      className={`w-6 h-6 ${
-                        star <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'
-                      }`}
-                    />
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <Textarea
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                placeholder={t.comment_placeholder || 'Share your feedback (optional)'}
-                className="min-h-24 text-sm"
-              />
-            </div>
-
-            <div className="flex gap-2">
-              <Button
-                onClick={handleSubmitFeedback}
-                disabled={submittingFeedback}
-                className="flex-1"
-              >
-                {t.submit || 'Submit'}
-              </Button>
-              <Button
-                onClick={() => setShowFeedback(false)}
-                variant="outline"
-                className="flex-1"
-              >
-                {t.skip || 'Skip'}
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {/* Return button */}
-        <Button onClick={onReturn} variant="ghost" className="w-full">
-          {t.return_to_dashboard || 'Return to dashboard'}
-        </Button>
+        </div>
       </div>
     </div>
   )
