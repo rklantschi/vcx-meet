@@ -70,6 +70,8 @@ export default function MeetPage() {
   const [sharingScreen, setSharingScreen] = useState(false)
   const [captionsOn, setCaptionsOn] = useState(false)
   const [captionLines, setCaptionLines] = useState<CaptionLine[]>([])
+  const [micOn, setMicOn] = useState(true)
+  const [cameraOn, setCameraOn] = useState(true)
 
   // Meeting data
   const demoMeeting = {
@@ -94,8 +96,8 @@ export default function MeetPage() {
     id: 'local-user',
     displayName: 'You',
     isInitiator,
-    micOn: true,
-    cameraOn: true,
+    micOn,
+    cameraOn,
     sharingScreen,
     captionsOn,
     connectionQuality: 'excellent' as const,
@@ -246,10 +248,11 @@ export default function MeetPage() {
         }}
         onToggleMic={() => {
           console.log('[Demo] Toggle mic')
-          setAppState('in-meeting')
+          setMicOn(!micOn)
         }}
         onToggleCamera={() => {
           console.log('[Demo] Toggle camera')
+          setCameraOn(!cameraOn)
         }}
         onSwitchMic={(id) => console.log('[Demo] Switch mic:', id)}
         onSwitchCamera={(id) => console.log('[Demo] Switch camera:', id)}
@@ -308,6 +311,8 @@ export default function MeetPage() {
           setCaptionsOn(false)
           setRecordingActive(false)
           setVoiceOnlyLocked(false)
+          setMicOn(true)
+          setCameraOn(true)
         }}
         t={{}}
       />
@@ -442,6 +447,24 @@ export default function MeetPage() {
                   className="w-3 h-3"
                 />
                 <span>Captions on</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer hover:bg-slate-800 p-1 rounded">
+                <input
+                  type="checkbox"
+                  checked={micOn}
+                  onChange={(e) => setMicOn(e.target.checked)}
+                  className="w-3 h-3"
+                />
+                <span>Mic on</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer hover:bg-slate-800 p-1 rounded">
+                <input
+                  type="checkbox"
+                  checked={cameraOn}
+                  onChange={(e) => setCameraOn(e.target.checked)}
+                  className="w-3 h-3"
+                />
+                <span>Camera on</span>
               </label>
             </div>
 
