@@ -54,7 +54,7 @@ interface MeetSurfaceProps {
   onSwitchMic?: (deviceId: string) => void
   onSwitchCamera?: (deviceId: string) => void
   onSwitchSpeaker?: (deviceId: string) => void
-  onStartScreenShare?: () => void
+  onStartScreenShare?: (stream?: MediaStream) => void
   onStopScreenShare?: () => void
   onAddInternalParticipant?: (userId: string) => void
   onGenerateGuestLink?: (params: GenerateGuestLinkParams) => void

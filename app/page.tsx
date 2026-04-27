@@ -268,8 +268,8 @@ export default function MeetPage() {
         onSwitchMic={(id) => console.log('[Demo] Switch mic:', id)}
         onSwitchCamera={(id) => console.log('[Demo] Switch camera:', id)}
         onSwitchSpeaker={(id) => console.log('[Demo] Switch speaker:', id)}
-        onStartScreenShare={() => {
-          console.log('[Demo] Start screen share')
+        onStartScreenShare={(stream) => {
+          console.log('[Demo] Start screen share', stream?.id)
           setSharingScreen(true)
         }}
         onStopScreenShare={() => {

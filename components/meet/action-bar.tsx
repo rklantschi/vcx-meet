@@ -59,7 +59,7 @@ interface ActionBarProps {
   onSwitchMic: (deviceId: string) => void
   onSwitchCamera: (deviceId: string) => void
   onSwitchSpeaker: (deviceId: string) => void
-  onStartScreenShare: () => void
+  onStartScreenShare: (stream?: MediaStream) => void
   onStopScreenShare: () => void
   onAddInternalParticipant: (userId: string) => void
   onGenerateGuestLink: (params: { sendVia: 'whatsapp' | 'sms' | 'email' | 'copy' }) => void
@@ -115,6 +115,22 @@ export function ActionBar({
   const [showRecordingConsent, setShowRecordingConsent] = useState(false)
   const [recordingConsentGiven, setRecordingConsentGiven] = useState(false)
   const [showAddParticipant, setShowAddParticipant] = useState(false)
+
+  const handleStartScreenShare = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getDisplayMedia({
+        video: { displaySurface: 'monitor' } as MediaTrackConstraints,
+        audio: true,
+      })
+      // When the user stops sharing via the browser's native stop button
+      stream.getVideoTracks()[0].addEventListener('ended', () => {
+        onStopScreenShare()
+      })
+      onStartScreenShare(stream)
+    } catch {
+      // User cancelled the picker — do nothing
+    }
+  }
 
   const handleToggleRecording = () => {
     if (!recordingActive && !recordingConsentGiven && isInitiator) {
@@ -229,7 +245,7 @@ export function ActionBar({
                 variant={sharingScreen ? 'default' : 'outline'}
                 size="icon"
                 className="rounded-full"
-                onClick={sharingScreen ? onStopScreenShare : onStartScreenShare}
+                onClick={sharingScreen ? onStopScreenShare : handleStartScreenShare}
               >
                 <Share2 className="w-5 h-5" />
               </Button>
@@ -274,7 +290,7 @@ export function ActionBar({
             <DropdownMenuContent align="end" side="top" className="w-56">
               {/* Mobile-only secondary controls */}
               <div className="sm:hidden">
-                <DropdownMenuItem onClick={sharingScreen ? onStopScreenShare : onStartScreenShare}>
+                <DropdownMenuItem onClick={sharingScreen ? onStopScreenShare : handleStartScreenShare}>
                   <Share2 className="w-4 h-4 mr-2" />
                   {sharingScreen ? t.stop_sharing || 'Stop sharing' : t.screen_share || 'Share screen'}
                 </DropdownMenuItem>
