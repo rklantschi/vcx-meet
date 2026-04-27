@@ -376,175 +376,189 @@ export function PreJoin({
         )}
       </div>
 
-      {/* Desktop layout (md+) */}
-      <div className="hidden md:flex flex-col items-center gap-6 my-auto py-8">
-        {/* Logo */}
-        {tenantBranding.logoUrl && (
-          <img src={tenantBranding.logoUrl} alt="Tenant logo" className="h-10 mb-4" />
-        )}
+      {/* Desktop layout (md+) — two-column */}
+      <div className="hidden md:flex w-full max-w-5xl mx-auto my-auto gap-10 px-10 items-center min-h-screen">
 
-        {/* Large camera preview */}
-        <div className="w-96 h-72 rounded-2xl bg-muted border-4 border-border overflow-hidden flex items-center justify-center relative">
-          {cameraEnabled ? (
-            <div className="w-full h-full relative">
-              <video
-                ref={videoPreviewRef}
-                className="w-full h-full object-cover"
-                autoPlay
-                muted
-                playsInline
-              />
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
-                <div className="text-8xl font-bold text-foreground/80">
-                  {displayName.charAt(0).toUpperCase() || '?'}
+        {/* LEFT: Camera preview */}
+        <div className="flex-1 flex flex-col gap-4">
+          {/* Preview box */}
+          <div className="w-full aspect-video rounded-2xl bg-muted border border-border overflow-hidden flex items-center justify-center relative">
+            {cameraEnabled ? (
+              <div className="w-full h-full relative">
+                <video
+                  ref={videoPreviewRef}
+                  className="w-full h-full object-cover"
+                  autoPlay
+                  muted
+                  playsInline
+                />
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
+                  <div className="text-9xl font-bold text-foreground/60">
+                    {displayName.charAt(0).toUpperCase() || '?'}
+                  </div>
+                </div>
+                <div className="absolute top-3 right-3 flex items-center gap-2 bg-black/50 px-2.5 py-1 rounded-full">
+                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                  <span className="text-xs text-white">{t.camera_on || 'Camera on'}</span>
                 </div>
               </div>
-              <div className="absolute top-4 right-4 flex items-center gap-2 bg-black/50 px-3 py-1.5 rounded-full">
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                <span className="text-xs text-white">{t.camera_on || 'Camera on'}</span>
+            ) : (
+              <div className="flex flex-col items-center justify-center w-full h-full gap-3">
+                <div className="w-24 h-24 rounded-full bg-muted-foreground/20 flex items-center justify-center">
+                  <span className="text-4xl font-bold text-muted-foreground">
+                    {displayName.charAt(0).toUpperCase() || '?'}
+                  </span>
+                </div>
+                <span className="text-sm text-muted-foreground">{t.camera_off || 'Camera off'}</span>
               </div>
+            )}
+          </div>
+
+          {/* Device controls under preview */}
+          <div className="flex items-center justify-center gap-6">
+            <div className="flex flex-col items-center gap-1">
+              <SplitButtonControl
+                type="mic"
+                isOn={micEnabled}
+                devices={availableDevices.mics}
+                onToggle={() => setMicEnabled(!micEnabled)}
+                onSwitchDevice={setMicId}
+                label={t.microphone || 'Microphone'}
+              />
+              <span className="text-xs text-muted-foreground">{t.microphone || 'Microphone'}</span>
             </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center w-full h-full bg-muted gap-2">
-              <VideoOff className="w-16 h-16 text-muted-foreground" />
-              <div className="text-7xl font-bold text-muted-foreground">
-                {displayName.charAt(0).toUpperCase() || '?'}
-              </div>
-              <span className="text-sm text-muted-foreground">{t.camera_off || 'Camera off'}</span>
+            <div className="flex flex-col items-center gap-1">
+              <SplitButtonControl
+                type="camera"
+                isOn={cameraEnabled}
+                devices={availableDevices.cameras}
+                onToggle={() => setCameraEnabled(!cameraEnabled)}
+                onSwitchDevice={setCameraId}
+                label={t.camera || 'Camera'}
+              />
+              <span className="text-xs text-muted-foreground">{t.camera || 'Camera'}</span>
             </div>
-          )}
-        </div>
-
-        {/* Meeting info */}
-        <div className="text-center">
-          <h1 className="text-2xl font-semibold text-foreground">{meeting.title || t.meeting_title || 'Join Meeting'}</h1>
-          {meeting.initiatorName && (
-            <p className="text-sm text-muted-foreground mt-1">{t.initiated_by || 'Meeting with'} {meeting.initiatorName}</p>
-          )}
-        </div>
-
-        {/* Display name input */}
-        <div className="w-80">
-          <Input
-            value={displayName}
-            onChange={(e) => setDisplayName(e.target.value)}
-            placeholder={t.display_name_placeholder || 'Your name'}
-            className="text-center"
-          />
-          {isDisplayNameEmpty && (
-            <p className="text-xs text-destructive text-center mt-2">
-              {t.display_name_required || 'Please enter your name to continue'}
-            </p>
-          )}
-        </div>
-
-        {/* Device controls */}
-        <div className="flex items-center justify-center gap-4">
-          <div className="flex flex-col items-center gap-1">
-            <SplitButtonControl
-              type="mic"
-              isOn={micEnabled}
-              devices={availableDevices.mics}
-              onToggle={() => setMicEnabled(!micEnabled)}
-              onSwitchDevice={setMicId}
-              label={t.microphone || 'Microphone'}
-            />
-            <span className="text-xs text-muted-foreground">{t.microphone || 'Microphone'}</span>
+            <div className="flex flex-col items-center gap-1">
+              <SplitButtonControl
+                type="speaker"
+                devices={availableDevices.speakers}
+                onSwitchDevice={setSpeakerId}
+                label={t.speaker || 'Speaker'}
+              />
+              <span className="text-xs text-muted-foreground">{t.speaker || 'Speaker'}</span>
+            </div>
           </div>
-          <div className="flex flex-col items-center gap-1">
-            <SplitButtonControl
-              type="camera"
-              isOn={cameraEnabled}
-              devices={availableDevices.cameras}
-              onToggle={() => setCameraEnabled(!cameraEnabled)}
-              onSwitchDevice={setCameraId}
-              label={t.camera || 'Camera'}
-            />
-            <span className="text-xs text-muted-foreground">{t.camera || 'Camera'}</span>
-          </div>
-          <div className="flex flex-col items-center gap-1">
-            <SplitButtonControl
-              type="speaker"
-              devices={availableDevices.speakers}
-              onSwitchDevice={setSpeakerId}
-              label={t.speaker || 'Speaker'}
-            />
-            <span className="text-xs text-muted-foreground">{t.speaker || 'Speaker'}</span>
+
+          {/* Test mic */}
+          <div className="flex gap-2 justify-center">
+            {testState === 'idle' && (
+              <Button variant="outline" size="sm" onClick={handleStartRecording} disabled={!micEnabled}>
+                <Mic className="w-4 h-4 mr-2" />
+                {t.test_mic || 'Test mic & speaker'}
+              </Button>
+            )}
+            {testState === 'recording' && (
+              <>
+                <Button variant="destructive" size="sm" disabled>
+                  <span className="w-2 h-2 rounded-full bg-white animate-pulse mr-2" />
+                  {t.recording || 'Recording...'}
+                </Button>
+                <Button variant="outline" size="sm" onClick={handleCancelTest}>
+                  {t.cancel || 'Cancel'}
+                </Button>
+              </>
+            )}
+            {testState === 'recorded' && (
+              <>
+                <Button variant="default" size="sm" onClick={handlePlayRecording}>
+                  <Play className="w-4 h-4 mr-2" />
+                  {t.play_recording || 'Play recording'}
+                </Button>
+                <Button variant="outline" size="sm" onClick={handleCancelTest}>
+                  {t.discard || 'Discard'}
+                </Button>
+              </>
+            )}
+            {testState === 'playing' && (
+              <Button variant="secondary" size="sm" disabled>
+                <Volume2 className="w-4 h-4 mr-2 animate-pulse" />
+                {t.playing || 'Playing...'}
+              </Button>
+            )}
           </div>
         </div>
 
-        {/* Test mic button */}
-        <div className="w-80 flex gap-2 justify-center">
-          {testState === 'idle' && (
+        {/* RIGHT: Meeting info + join */}
+        <div className="w-80 flex flex-col gap-6">
+          {/* Logo */}
+          {tenantBranding.logoUrl && (
+            <img src={tenantBranding.logoUrl} alt="Tenant logo" className="h-8" />
+          )}
+
+          {/* Meeting info */}
+          <div>
+            <h1 className="text-3xl font-semibold text-foreground text-pretty leading-tight">
+              {meeting.title || t.meeting_title || 'Join Meeting'}
+            </h1>
+            {meeting.initiatorName && (
+              <p className="text-sm text-muted-foreground mt-2">
+                {t.initiated_by || 'Meeting with'} {meeting.initiatorName}
+              </p>
+            )}
+          </div>
+
+          <div className="border-t border-border" />
+
+          {/* Name input */}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium text-foreground">
+              {t.display_name_label || 'Your name'}
+            </label>
+            <Input
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              placeholder={t.display_name_placeholder || 'Enter your name'}
+            />
+            {isDisplayNameEmpty && (
+              <p className="text-xs text-destructive">
+                {t.display_name_required || 'Please enter your name to continue'}
+              </p>
+            )}
+          </div>
+
+          {/* Join buttons */}
+          <div className="flex flex-col gap-2">
             <Button
-              variant="outline"
-              size="sm"
-              onClick={handleStartRecording}
-              disabled={!micEnabled}
+              onClick={() => handleJoinClick('video')}
+              disabled={isJoinDisabled || isLoading}
+              size="lg"
+              className="w-full"
             >
-              <Mic className="w-4 h-4 mr-2" />
-              {t.test_mic || 'Test mic'}
+              {t.join_video || 'Join with video'}
             </Button>
-          )}
-          {testState === 'recording' && (
-            <>
-              <Button variant="destructive" size="sm" disabled>
-                <span className="w-2 h-2 rounded-full bg-white animate-pulse mr-2" />
-                {t.recording || 'Recording...'}
-              </Button>
-              <Button variant="outline" size="sm" onClick={handleCancelTest}>
-                {t.cancel || 'Cancel'}
-              </Button>
-            </>
-          )}
-          {testState === 'recorded' && (
-            <>
-              <Button variant="default" size="sm" onClick={handlePlayRecording}>
-                <Play className="w-4 h-4 mr-2" />
-                {t.play_recording || 'Play recording'}
-              </Button>
-              <Button variant="outline" size="sm" onClick={handleCancelTest}>
-                {t.discard || 'Discard'}
-              </Button>
-            </>
-          )}
-          {testState === 'playing' && (
-            <Button variant="secondary" size="sm" disabled>
-              <Volume2 className="w-4 h-4 mr-2 animate-pulse" />
-              {t.playing || 'Playing...'}
+            <Button
+              onClick={() => handleJoinClick('voice')}
+              disabled={isJoinDisabled || isLoading}
+              size="lg"
+              variant="outline"
+              className="w-full"
+            >
+              {t.join_voice || 'Join voice only'}
             </Button>
-          )}
-        </div>
-
-        {/* Join buttons */}
-        <div className="flex gap-3">
-          <Button
-            onClick={() => handleJoinClick('voice')}
-            disabled={isJoinDisabled || isLoading}
-            size="lg"
-          >
-            {t.join_voice || 'Join voice'}
-          </Button>
-          <Button
-            onClick={() => handleJoinClick('video')}
-            disabled={isJoinDisabled || isLoading}
-            size="lg"
-          >
-            {t.join_video || 'Join video'}
-          </Button>
-        </div>
-
-        {/* Cancel */}
-        <Button onClick={onCancel} variant="ghost">
-          {t.cancel || 'Cancel'}
-        </Button>
-
-        {/* Powered by footer */}
-        {localUser.isGuest && (
-          <div className="text-xs text-muted-foreground">
-            {t.powered_by || 'Powered by Vortex CX'}
           </div>
-        )}
+
+          {/* Cancel */}
+          <Button onClick={onCancel} variant="ghost" className="w-full">
+            {t.cancel || 'Cancel'}
+          </Button>
+
+          {/* Powered by */}
+          {localUser.isGuest && (
+            <div className="text-xs text-muted-foreground text-center pt-2">
+              {t.powered_by || 'Powered by Vortex CX'}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
