@@ -104,23 +104,29 @@ export function AudioTile({ participant, allowRotate = false }: AudioTileProps) 
 
   return (
     <div
-      className={`relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg overflow-hidden flex flex-col items-center justify-center gap-4 p-4 animate-in fade-in scale-in duration-300 transition-all group ${
+      className={`relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg overflow-hidden flex flex-col items-center justify-center gap-3 p-4 animate-in fade-in scale-in duration-300 transition-all group border border-slate-700/50 ${
         allowRotate && isPortrait ? 'w-auto h-full aspect-[9/16] mx-auto' : 'w-full h-full'
       }`}
     >
+      {/* Audio-only badge */}
+      <div className="absolute top-2 right-2 bg-slate-700/90 backdrop-blur-sm px-2 py-1 rounded-full flex items-center gap-1 text-xs text-slate-100 border border-slate-600/50">
+        <Mic className="w-3 h-3" />
+        <span className="font-medium">Audio only</span>
+      </div>
+
       {/* Avatar */}
       {participant.avatar ? (
-        <img src={participant.avatar} alt={participant.displayName} className="w-20 h-20 rounded-full" />
+        <img src={participant.avatar} alt={participant.displayName} className="w-20 h-20 rounded-full border-2 border-slate-600/50" />
       ) : (
-        <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center text-2xl font-bold text-muted-foreground">
+        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center text-2xl font-bold text-slate-300 border-2 border-slate-600/50">
           {participant.displayName.charAt(0).toUpperCase()}
         </div>
       )}
 
       {/* Display name */}
       <div className="text-center">
-        <p className="text-sm text-white font-medium">{participant.displayName}</p>
-        {participant.isInitiator && <p className="text-xs text-amber-400">Initiator</p>}
+        <p className="text-sm text-slate-100 font-medium">{participant.displayName}</p>
+        {participant.isInitiator && <p className="text-xs text-amber-400 mt-0.5">Initiator</p>}
       </div>
 
       {/* Speaking indicator with animation */}
@@ -137,10 +143,10 @@ export function AudioTile({ participant, allowRotate = false }: AudioTileProps) 
       )}
 
       {/* Mic status */}
-      <div className="flex items-center gap-1 text-xs text-muted-foreground">
+      <div className="flex items-center gap-1 text-xs text-slate-300">
         {participant.micOn ? (
           <>
-            <div className="w-2 h-2 rounded-full bg-green-500" />
+            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
             <span>Mic on</span>
           </>
         ) : (
@@ -155,7 +161,7 @@ export function AudioTile({ participant, allowRotate = false }: AudioTileProps) 
       {allowRotate && (
         <button
           onClick={() => setIsPortrait(p => !p)}
-          className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 hover:bg-black/80 p-1.5 rounded-full"
+          className="absolute bottom-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 hover:bg-black/80 p-1.5 rounded-full"
           title={isPortrait ? 'Switch to landscape' : 'Switch to portrait'}
         >
           <RotateCcw className={`w-3.5 h-3.5 text-white transition-transform ${isPortrait ? 'rotate-90' : ''}`} />
