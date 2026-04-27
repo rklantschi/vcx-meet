@@ -358,23 +358,15 @@ export function PreJoin({
           </div>
         </div>
 
-        {/* Join buttons */}
+        {/* Join button */}
         <div className="w-full flex gap-3">
           <Button
-            onClick={() => handleJoinClick('voice')}
+            onClick={() => handleJoinClick(cameraEnabled ? 'video' : 'voice')}
             disabled={isJoinDisabled || isLoading}
             className="flex-1"
             size="lg"
           >
-            {t.join_voice || 'Join voice'}
-          </Button>
-          <Button
-            onClick={() => handleJoinClick('video')}
-            disabled={isJoinDisabled || isLoading}
-            className="flex-1"
-            size="lg"
-          >
-            {t.join_video || 'Join video'}
+            {t.join_meeting || 'Join Meeting'}
           </Button>
         </div>
 
@@ -585,24 +577,15 @@ export function PreJoin({
             )}
           </div>
 
-          {/* Join buttons */}
+          {/* Join button */}
           <div className="flex flex-col gap-3 pt-4">
             <Button
-              onClick={() => handleJoinClick('video')}
+              onClick={() => handleJoinClick(cameraEnabled ? 'video' : 'voice')}
               disabled={isJoinDisabled || isLoading}
               size="lg"
               className="w-full"
             >
-              {t.join_video || 'Join with video'}
-            </Button>
-            <Button
-              onClick={() => handleJoinClick('voice')}
-              disabled={isJoinDisabled || isLoading}
-              size="lg"
-              variant="outline"
-              className="w-full"
-            >
-              {t.join_voice || 'Join voice only'}
+              {t.join_meeting || 'Join Meeting'}
             </Button>
           </div>
 
