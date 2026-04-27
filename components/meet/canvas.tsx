@@ -11,8 +11,9 @@ interface CanvasProps {
   isAudioOnly?: boolean
   recordingActive?: boolean
   captionsEnabled?: boolean
-  remoteScreenShare?: (ParticipantTile | LocalParticipant) | null
-  screenShareSource?: string | null
+  remoteScreenShare: ParticipantTile | null
+  screenShareSource: 'screen' | 'window' | null
+  screenShareStream?: MediaStream
 }
 
 export function Canvas({
@@ -23,6 +24,7 @@ export function Canvas({
   captionsEnabled = false,
   remoteScreenShare = null,
   screenShareSource = null,
+  screenShareStream,
 }: CanvasProps) {
   const [pipPosition, setPipPosition] = useState<'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'>('bottom-right')
   const [isLandscape, setIsLandscape] = useState(false)
@@ -99,13 +101,25 @@ export function Canvas({
       {remoteScreenShare && (
         <div className="w-full h-full flex gap-1 p-1">
           {/* Screen share content - main area */}
-          <div className="flex-1 bg-slate-900 rounded-lg flex items-center justify-center relative">
-            <div className="text-center">
-              <div className="text-white font-medium mb-2">{remoteScreenShare.displayName} is sharing</div>
-              <div className="w-48 h-32 bg-slate-800 rounded flex items-center justify-center text-slate-600">
-                [Screen Content]
+          <div className="flex-1 bg-slate-900 rounded-lg flex items-center justify-center relative overflow-hidden">
+            {screenShareStream ? (
+              <video
+                ref={(video) => {
+                  if (video && screenShareStream) {
+                    video.srcObject = screenShareStream
+                    video.play().catch(() => {})
+                  }
+                }}
+                autoPlay
+                playsInline
+                className="w-full h-full object-contain"
+              />
+            ) : (
+              <div className="text-center">
+                <div className="text-white font-medium mb-2">{remoteScreenShare.displayName} is sharing</div>
+                <div className="text-sm text-slate-400">Screen content loading...</div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Participant tiles strip */}

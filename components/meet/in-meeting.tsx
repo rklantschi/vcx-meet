@@ -24,6 +24,7 @@ interface InMeetingProps {
   meetingLinkUrl?: string
   captionLines?: CaptionLine[]
   screenShareSource?: string | null
+  screenShareStream?: MediaStream
   micVolume?: number
   speakerVolume?: number
   onToggleMic: () => void
@@ -55,7 +56,8 @@ export function InMeeting({
   internalUsers = [],
   meetingLinkUrl = '',
   captionLines = [],
-  screenShareSource = null,
+  screenShareSource,
+  screenShareStream,
   micVolume = 80,
   speakerVolume = 80,
   onToggleMic,
@@ -144,6 +146,7 @@ export function InMeeting({
         captionsEnabled={localParticipant.captionsOn}
         remoteScreenShare={screenShareParticipant}
         screenShareSource={screenShareSource}
+        screenShareStream={screenShareStream}
       />
 
       {/* Captions overlay */}

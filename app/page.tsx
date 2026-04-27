@@ -68,6 +68,7 @@ export default function MeetPage() {
   const [recordingActive, setRecordingActive] = useState(false)
   const [voiceOnlyLocked, setVoiceOnlyLocked] = useState(false)
   const [sharingScreen, setSharingScreen] = useState(false)
+  const [screenShareStream, setScreenShareStream] = useState<MediaStream | undefined>()
   const [captionsOn, setCaptionsOn] = useState(false)
   const [captionLines, setCaptionLines] = useState<CaptionLine[]>([])
   const [micOn, setMicOn] = useState(true)
@@ -239,6 +240,7 @@ export default function MeetPage() {
         otherParty={appState === 'pre-join' && meetingState === 'waiting-for-other' ? demoOtherParty : undefined}
         captionLines={captionLines}
         screenShareSource={sharingScreen ? 'Entire Screen' : null}
+        screenShareStream={screenShareStream}
         micVolume={micVolume}
         speakerVolume={speakerVolume}
         onJoin={(params) => {
@@ -270,10 +272,12 @@ export default function MeetPage() {
         onSwitchSpeaker={(id) => console.log('[Demo] Switch speaker:', id)}
         onStartScreenShare={(stream) => {
           console.log('[Demo] Start screen share', stream?.id)
+          setScreenShareStream(stream)
           setSharingScreen(true)
         }}
         onStopScreenShare={() => {
           console.log('[Demo] Stop screen share')
+          setScreenShareStream(undefined)
           setSharingScreen(false)
         }}
         onAddInternalParticipant={(id) => {
