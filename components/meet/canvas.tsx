@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { MicOff, Grid, Maximize2, Pin } from 'lucide-react'
+import { MicOff, Grid, Maximize2 } from 'lucide-react'
 import { VideoTile, AudioTile, SelfPIP } from './tiles'
 import type { LocalParticipant, ParticipantTile } from '@/types/meet'
 
@@ -77,26 +77,19 @@ export function Canvas({
   // Filter out screen share participants from regular grid
   const regularParticipants = allParticipants.filter((p) => !p.sharingScreen)
 
-  // Click on a tile in grid → go to spotlight+pinned
-  // Click on a thumbnail in spotlight → pin that person
-  // Click on the main (maximized) tile when pinned → unpin (back to follow-speaker)
+  // Clicking any tile toggles pin on that participant.
+  // Pinning always switches to spotlight view.
+  // Unpinning in spotlight stays in follow-speaker mode (does not exit spotlight).
   const handleTileClick = (participantId: string) => {
-    if (layoutMode === 'grid') {
-      // Enter spotlight and pin this participant
+    if (pinnedParticipantId === participantId) {
+      // Unpin — stay in spotlight, follow speaker
+      setPinnedParticipantId(null)
+      setSpotlightMode('follow')
+    } else {
+      // Pin this participant and enter spotlight
       setPinnedParticipantId(participantId)
       setSpotlightMode('pinned')
       setLayoutMode('spotlight')
-    } else if (layoutMode === 'spotlight') {
-      const isMainTile = spotlightParticipant?.id === participantId
-      if (isMainTile && spotlightMode === 'pinned') {
-        // Unpin — stay in spotlight but follow speaker
-        setPinnedParticipantId(null)
-        setSpotlightMode('follow')
-      } else if (!isMainTile) {
-        // Pin a thumbnail participant
-        setPinnedParticipantId(participantId)
-        setSpotlightMode('pinned')
-      }
     }
   }
 
@@ -139,24 +132,28 @@ export function Canvas({
           <button
             onClick={() => {
               if (layoutMode === 'grid') {
-                // Grid → Spotlight follow-speaker
                 setLayoutMode('spotlight')
                 setSpotlightMode('follow')
                 setPinnedParticipantId(null)
               } else {
-                // Any spotlight → Grid
                 setLayoutMode('grid')
                 setSpotlightMode('follow')
                 setPinnedParticipantId(null)
               }
             }}
-            className="flex items-center gap-1 bg-black/60 hover:bg-black/80 px-2 py-1 rounded-full transition-colors"
+            className="flex items-center gap-1.5 bg-black/60 hover:bg-black/80 px-2.5 py-1.5 rounded-full transition-colors"
             title={layoutMode === 'grid' ? 'Switch to spotlight view' : 'Switch to grid view'}
           >
             {layoutMode === 'grid' ? (
-              <Maximize2 className="w-3.5 h-3.5 text-white" />
+              <>
+                <Maximize2 className="w-3.5 h-3.5 text-white" />
+                <span className="text-xs text-white">Spotlight</span>
+              </>
             ) : (
-              <Grid className="w-3.5 h-3.5 text-white" />
+              <>
+                <Grid className="w-3.5 h-3.5 text-white" />
+                <span className="text-xs text-white">Grid</span>
+              </>
             )}
           </button>
         )}
@@ -381,13 +378,6 @@ export function Canvas({
                     onClick={() => handleTileClick(spotlightParticipant.id)}
                   />
                 )}
-                {/* Status badge */}
-                <div className="absolute top-2 left-2 bg-black/60 px-2 py-1 rounded-full flex items-center gap-1 pointer-events-none">
-                  <Pin className={`w-3 h-3 ${spotlightMode === 'pinned' ? 'text-primary' : 'text-slate-400'}`} />
-                  <span className="text-xs text-white font-medium">
-                    {spotlightMode === 'pinned' ? 'Pinned — click to unpin' : 'Following speaker'}
-                  </span>
-                </div>
               </div>
             </div>
           ) : (
@@ -412,13 +402,6 @@ export function Canvas({
                     onClick={() => handleTileClick(spotlightParticipant.id)}
                   />
                 )}
-                {/* Status badge */}
-                <div className="absolute top-2 left-2 bg-black/60 px-2 py-1 rounded-full flex items-center gap-1 pointer-events-none">
-                  <Pin className={`w-3 h-3 ${spotlightMode === 'pinned' ? 'text-primary' : 'text-slate-400'}`} />
-                  <span className="text-xs text-white font-medium">
-                    {spotlightMode === 'pinned' ? 'Pinned — click to unpin' : 'Following speaker'}
-                  </span>
-                </div>
               </div>
               {/* Thumbnail strip - vertical scrollable on side */}
               <div className="w-24 flex-shrink-0 flex flex-col gap-1 overflow-y-auto">
