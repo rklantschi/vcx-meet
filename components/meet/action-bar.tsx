@@ -11,6 +11,12 @@ import {
   Captions,
   XCircle,
   UserPlus,
+  Mic,
+  MicOff,
+  Video,
+  VideoOff,
+  Volume2,
+  VolumeX,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -38,6 +44,7 @@ interface ActionBarProps {
   recordingActive?: boolean
   voiceOnlyLocked?: boolean
   isInitiator?: boolean
+  isLandscapeMobile?: boolean
   displayName: string
   meeting: Meeting
   localParticipant: LocalParticipant
@@ -75,6 +82,7 @@ export function ActionBar({
   recordingActive = false,
   voiceOnlyLocked = false,
   isInitiator = false,
+  isLandscapeMobile = false,
   displayName,
   meeting,
   localParticipant,
@@ -127,37 +135,89 @@ export function ActionBar({
       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-black/50 px-3 py-3 sm:px-4 flex items-center justify-between sm:justify-center gap-2 sm:gap-3">
         {/* Always-visible core controls */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Mic split button */}
-          <SplitButtonControl
-            type="mic"
-            isOn={micOn}
-            devices={availableDevices.mics}
-            onToggle={onToggleMic}
-            onSwitchDevice={onSwitchMic}
-            label={t.microphone || 'Microphone'}
-          />
+          {/* In landscape mobile: show minimal icon-only buttons */}
+          {isLandscapeMobile ? (
+            <>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant={micOn ? 'default' : 'destructive'}
+                    size="icon"
+                    className="rounded-full"
+                    onClick={onToggleMic}
+                  >
+                    {micOn ? <Mic className="w-4 h-4" /> : <MicOff className="w-4 h-4" />}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>{micOn ? t.mute || 'Mute' : t.unmute || 'Unmute'}</TooltipContent>
+              </Tooltip>
 
-          {/* Camera split button */}
-          {!voiceOnlyLocked && (
-            <SplitButtonControl
-              type="camera"
-              isOn={cameraOn}
-              devices={availableDevices.cameras}
-              onToggle={onToggleCamera}
-              onSwitchDevice={onSwitchCamera}
-              label={t.camera || 'Camera'}
-            />
+              {!voiceOnlyLocked && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant={cameraOn ? 'default' : 'destructive'}
+                      size="icon"
+                      className="rounded-full"
+                      onClick={onToggleCamera}
+                    >
+                      {cameraOn ? <Video className="w-4 h-4" /> : <VideoOff className="w-4 h-4" />}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>{cameraOn ? t.turn_off_camera || 'Turn off camera' : t.turn_on_camera || 'Turn on camera'}</TooltipContent>
+                </Tooltip>
+              )}
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant={speakerOn ? 'default' : 'destructive'}
+                    size="icon"
+                    className="rounded-full"
+                    onClick={onToggleSpeaker}
+                  >
+                    {speakerOn ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>{speakerOn ? t.mute_speaker || 'Mute speaker' : t.unmute_speaker || 'Unmute speaker'}</TooltipContent>
+              </Tooltip>
+            </>
+          ) : (
+            /* Normal mode: show full split buttons */
+            <>
+              {/* Mic split button */}
+              <SplitButtonControl
+                type="mic"
+                isOn={micOn}
+                devices={availableDevices.mics}
+                onToggle={onToggleMic}
+                onSwitchDevice={onSwitchMic}
+                label={t.microphone || 'Microphone'}
+              />
+
+              {/* Camera split button */}
+              {!voiceOnlyLocked && (
+                <SplitButtonControl
+                  type="camera"
+                  isOn={cameraOn}
+                  devices={availableDevices.cameras}
+                  onToggle={onToggleCamera}
+                  onSwitchDevice={onSwitchCamera}
+                  label={t.camera || 'Camera'}
+                />
+              )}
+
+              {/* Speaker split button */}
+              <SplitButtonControl
+                type="speaker"
+                isOn={speakerOn}
+                devices={availableDevices.speakers}
+                onToggle={onToggleSpeaker}
+                onSwitchDevice={onSwitchSpeaker}
+                label={t.speaker || 'Speaker'}
+              />
+            </>
           )}
-
-          {/* Speaker split button */}
-          <SplitButtonControl
-            type="speaker"
-            isOn={speakerOn}
-            devices={availableDevices.speakers}
-            onToggle={onToggleSpeaker}
-            onSwitchDevice={onSwitchSpeaker}
-            label={t.speaker || 'Speaker'}
-          />
         </div>
 
         {/* Secondary controls — hidden on mobile, shown on sm+ */}

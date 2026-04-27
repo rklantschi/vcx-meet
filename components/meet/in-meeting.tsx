@@ -79,6 +79,7 @@ export function InMeeting({
   t,
 }: InMeetingProps) {
   const [actionBarVisible, setActionBarVisible] = useState(true)
+  const [isLandscapeMobile, setIsLandscapeMobile] = useState(false)
   const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // Reset auto-hide timer
@@ -92,6 +93,21 @@ export function InMeeting({
   }, [])
 
   // Start timer on mount, cleanup on unmount
+  useEffect(() => {
+    const checkLandscapeMobile = () => {
+      const landscape = window.innerWidth > window.innerHeight
+      const mobile = window.innerWidth <= 768
+      setIsLandscapeMobile(landscape && mobile)
+    }
+    checkLandscapeMobile()
+    window.addEventListener('resize', checkLandscapeMobile)
+    window.addEventListener('orientationchange', checkLandscapeMobile)
+    return () => {
+      window.removeEventListener('resize', checkLandscapeMobile)
+      window.removeEventListener('orientationchange', checkLandscapeMobile)
+    }
+  }, [])
+
   useEffect(() => {
     resetHideTimer()
     return () => {
@@ -176,6 +192,7 @@ export function InMeeting({
           onSpeakerVolumeChange={onSpeakerVolumeChange}
           onLeave={onLeave}
           t={t}
+          isLandscapeMobile={isLandscapeMobile}
         />
       )}
     </div>
