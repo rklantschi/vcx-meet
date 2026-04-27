@@ -16,6 +16,8 @@ import type { InternalUser } from '@/types/meet'
 interface AddParticipantPopoverProps {
   internalUsers: InternalUser[]
   meetingLinkUrl: string
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
   onAddInternalParticipant: (userId: string) => void
   onGenerateGuestLink: (params: { sendVia: 'whatsapp' | 'sms' | 'email' | 'copy' }) => void
 }
@@ -23,10 +25,14 @@ interface AddParticipantPopoverProps {
 export function AddParticipantPopover({
   internalUsers,
   meetingLinkUrl,
+  open,
+  onOpenChange,
   onAddInternalParticipant,
   onGenerateGuestLink,
 }: AddParticipantPopoverProps) {
-  const [isOpen, setIsOpen] = useState(false)
+  const [internalOpen, setInternalOpen] = useState(false)
+  const isOpen = open !== undefined ? open : internalOpen
+  const setIsOpen = onOpenChange || setInternalOpen
   const [searchQuery, setSearchQuery] = useState('')
   const [copied, setCopied] = useState(false)
 

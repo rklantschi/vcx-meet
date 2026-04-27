@@ -10,6 +10,7 @@ import {
   Settings,
   Captions,
   XCircle,
+  UserPlus,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -101,6 +102,7 @@ export function ActionBar({
   const [showEndCallDialog, setShowEndCallDialog] = useState(false)
   const [showRecordingConsent, setShowRecordingConsent] = useState(false)
   const [recordingConsentGiven, setRecordingConsentGiven] = useState(false)
+  const [showAddParticipant, setShowAddParticipant] = useState(false)
 
   const handleToggleRecording = () => {
     if (!recordingActive && !recordingConsentGiven && isInitiator) {
@@ -165,6 +167,8 @@ export function ActionBar({
           <AddParticipantPopover
             internalUsers={internalUsers}
             meetingLinkUrl={meetingLinkUrl}
+            open={showAddParticipant}
+            onOpenChange={setShowAddParticipant}
             onAddInternalParticipant={onAddInternalParticipant}
             onGenerateGuestLink={onGenerateGuestLink}
           />
@@ -199,6 +203,10 @@ export function ActionBar({
                 <DropdownMenuItem onClick={sharingScreen ? onStopScreenShare : onStartScreenShare}>
                   <Share2 className="w-4 h-4 mr-2" />
                   {sharingScreen ? t.stop_sharing || 'Stop sharing' : t.screen_share || 'Share screen'}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setShowAddParticipant(true)}>
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  {t.add_participant || 'Add participant'}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={onToggleCaptions}>
                   <Captions className="w-4 h-4 mr-2" />
