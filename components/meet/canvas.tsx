@@ -329,8 +329,8 @@ export function Canvas({
           {/* Mobile portrait: thumbnails on top, spotlight below */}
           {isMobile && !isLandscape ? (
             <div className="w-full h-full flex flex-col gap-1 p-1">
-              {/* Thumbnail strip - horizontal scrollable at top, right padding to clear indicators */}
-              <div className="h-16 flex-shrink-0 flex gap-1 overflow-x-auto pr-20">
+              {/* Thumbnail strip - horizontal scrollable at top, right padding to clear both icons */}
+              <div className="h-16 flex-shrink-0 flex gap-1 overflow-x-auto pr-32">
                 {thumbnailParticipants.map((participant) => (
                   <div key={participant.id} className="h-full aspect-video flex-shrink-0">
                     {isAudioOnly || !participant.hasVideoTrack ? (
