@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { MicOff, Grid, Maximize2, Circle } from 'lucide-react'
 import { VideoTile, AudioTile, SelfPIP } from './tiles'
 import type { LocalParticipant, ParticipantTile } from '@/types/meet'
@@ -31,11 +31,14 @@ export function Canvas({
   const [pipPosition, setPipPosition] = useState<'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'>('bottom-right')
   const [isLandscape, setIsLandscape] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
-  // layoutMode: 'grid' | 'spotlight'
-  // spotlightMode: 'follow' (auto-follows speaker) | 'pinned' (locked to one person)
   const [layoutMode, setLayoutMode] = useState<'grid' | 'spotlight'>('grid')
   const [spotlightMode, setSpotlightMode] = useState<'follow' | 'pinned'>('follow')
   const [pinnedParticipantId, setPinnedParticipantId] = useState<string | null>(null)
+  
+  // Swipe/drag handling for mobile thumbnail strip
+  const thumbnailStripRef = useRef<HTMLDivElement>(null)
+  const dragStartX = useRef(0)
+  const scrollLeftStart = useRef(0)
 
   useEffect(() => {
     const checkOrientation = () => {
@@ -52,6 +55,18 @@ export function Canvas({
       window.removeEventListener('orientationchange', checkOrientation)
     }
   }, [])
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!thumbnailStripRef.current) return
+    dragStartX.current = e.touches[0].clientX
+    scrollLeftStart.current = thumbnailStripRef.current.scrollLeft
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!thumbnailStripRef.current) return
+    const diff = dragStartX.current - e.touches[0].clientX
+    thumbnailStripRef.current.scrollLeft = scrollLeftStart.current + diff
+  }
 
   const allParticipants = [localParticipant, ...participants]
   const participantCount = allParticipants.length
@@ -329,8 +344,13 @@ export function Canvas({
           {/* Mobile portrait: thumbnails on top, spotlight below */}
           {isMobile && !isLandscape ? (
             <div className="w-full h-full flex flex-col gap-1 p-1">
-              {/* Thumbnail strip - width constrained to leave room for icons top-right */}
-              <div className="h-16 flex-shrink-0 flex gap-1 overflow-x-hidden w-[calc(100%-5rem)]">
+              {/* Thumbnail strip - width constrained to leave room for icons top-right, swipeable */}
+              <div 
+                ref={thumbnailStripRef}
+                className="h-16 flex-shrink-0 flex gap-1 overflow-x-auto w-[calc(100%-5rem)] scrollbar-hide"
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+              >
                 {thumbnailParticipants.map((participant) => (
                   <div key={participant.id} className="h-full aspect-video flex-shrink-0">
                     {isAudioOnly || !participant.hasVideoTrack ? (
