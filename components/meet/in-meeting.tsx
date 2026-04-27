@@ -147,6 +147,7 @@ export function InMeeting({
         remoteScreenShare={screenShareParticipant}
         screenShareSource={screenShareSource}
         screenShareStream={screenShareStream}
+        meetingTitle={meeting.title}
       />
 
       {/* Captions overlay */}

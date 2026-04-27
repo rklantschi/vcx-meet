@@ -14,6 +14,7 @@ interface CanvasProps {
   remoteScreenShare: ParticipantTile | null
   screenShareSource: 'screen' | 'window' | null
   screenShareStream?: MediaStream
+  meetingTitle?: string
 }
 
 export function Canvas({
@@ -25,6 +26,7 @@ export function Canvas({
   remoteScreenShare = null,
   screenShareSource = null,
   screenShareStream,
+  meetingTitle,
 }: CanvasProps) {
   const [pipPosition, setPipPosition] = useState<'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'>('bottom-right')
   const [isLandscape, setIsLandscape] = useState(false)
@@ -102,6 +104,13 @@ export function Canvas({
 
   return (
     <div className="relative w-full h-full bg-black overflow-hidden">
+      {/* Meeting title - only in grid mode */}
+      {meetingTitle && layoutMode === 'grid' && !remoteScreenShare && (
+        <div className="absolute top-4 left-4 text-white font-medium text-sm z-30 max-w-xs truncate">
+          {meetingTitle}
+        </div>
+      )}
+
       {/* Screen share banner */}
       {hasLocalScreenShare && (
         <div className="absolute top-0 left-0 right-0 bg-red-600 text-white px-4 py-2 flex items-center justify-between text-sm font-medium z-50">
