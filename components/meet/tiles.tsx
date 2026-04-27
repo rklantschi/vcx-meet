@@ -1,6 +1,7 @@
 'use client'
 
-import { Mic, MicOff, Phone } from 'lucide-react'
+import { useState } from 'react'
+import { Mic, MicOff, Phone, RotateCcw } from 'lucide-react'
 import type { ParticipantTile, LocalParticipant } from '@/types/meet'
 
 // Shared type for tiles that can render either local or remote participants
@@ -9,11 +10,18 @@ type TileParticipant = ParticipantTile | LocalParticipant
 interface VideoTileProps {
   participant: ParticipantTile
   isLocal?: boolean
+  allowRotate?: boolean
 }
 
-export function VideoTile({ participant, isLocal = false }: VideoTileProps) {
+export function VideoTile({ participant, isLocal = false, allowRotate = false }: VideoTileProps) {
+  const [isPortrait, setIsPortrait] = useState(false)
+
   return (
-    <div className="relative w-full h-full bg-black rounded-lg overflow-hidden group animate-in fade-in scale-in duration-300">
+    <div
+      className={`relative bg-black rounded-lg overflow-hidden group animate-in fade-in scale-in duration-300 transition-all ${
+        allowRotate && isPortrait ? 'w-auto h-full aspect-[9/16] mx-auto' : 'w-full h-full'
+      }`}
+    >
       {/* Video placeholder */}
       <div className="w-full h-full bg-gradient-to-br from-slate-900 to-black flex items-center justify-center">
         <div className="text-center">
@@ -70,6 +78,17 @@ export function VideoTile({ participant, isLocal = false }: VideoTileProps) {
           <Phone className="w-3 h-3" />
           PSTN
         </div>
+      )}
+
+      {/* Rotate button (desktop only) */}
+      {allowRotate && (
+        <button
+          onClick={() => setIsPortrait(p => !p)}
+          className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 hover:bg-black/80 p-1.5 rounded-full"
+          title={isPortrait ? 'Switch to landscape' : 'Switch to portrait'}
+        >
+          <RotateCcw className={`w-3.5 h-3.5 text-white transition-transform ${isPortrait ? 'rotate-90' : ''}`} />
+        </button>
       )}
     </div>
   )
@@ -132,9 +151,10 @@ interface SelfPIPProps {
   participant: TileParticipant
   position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'
   onDragStart?: (e: React.MouseEvent) => void
+  isLandscape?: boolean
 }
 
-export function SelfPIP({ participant, position = 'bottom-right', onDragStart }: SelfPIPProps) {
+export function SelfPIP({ participant, position = 'bottom-right', onDragStart, isLandscape = false }: SelfPIPProps) {
   const positionClass = {
     'bottom-right': 'bottom-4 right-4',
     'bottom-left': 'bottom-4 left-4',
@@ -142,9 +162,12 @@ export function SelfPIP({ participant, position = 'bottom-right', onDragStart }:
     'top-left': 'top-4 left-4',
   }[position]
 
+  // In landscape mobile, PIP is wider (16:9) instead of square
+  const sizeClass = isLandscape ? 'w-36 h-20' : 'w-24 h-24'
+
   return (
     <div 
-      className={`absolute ${positionClass} w-24 h-24 rounded-lg overflow-hidden shadow-lg cursor-move hover:shadow-xl transition-shadow`} 
+      className={`absolute ${positionClass} ${sizeClass} rounded-lg overflow-hidden shadow-lg cursor-move hover:shadow-xl transition-all duration-300`} 
       onMouseDown={onDragStart}
     >
       <div className="w-full h-full bg-gradient-to-br from-slate-900 to-black flex items-center justify-center">

@@ -114,7 +114,7 @@ export function InMeeting({
 
   return (
     <div
-      className="relative w-full h-screen bg-black overflow-hidden"
+      className="relative w-full h-[100dvh] bg-black overflow-hidden"
       onMouseMove={handleCanvasInteraction}
       onClick={handleCanvasInteraction}
       onTouchStart={handleCanvasInteraction}

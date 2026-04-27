@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { MicOff } from 'lucide-react'
 import { VideoTile, AudioTile, SelfPIP } from './tiles'
 import type { LocalParticipant, ParticipantTile } from '@/types/meet'
 
@@ -24,6 +25,24 @@ export function Canvas({
   screenShareSource = null,
 }: CanvasProps) {
   const [pipPosition, setPipPosition] = useState<'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'>('bottom-right')
+  const [isLandscape, setIsLandscape] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkOrientation = () => {
+      const landscape = window.innerWidth > window.innerHeight
+      const mobile = window.innerWidth <= 768
+      setIsLandscape(landscape)
+      setIsMobile(mobile)
+    }
+    checkOrientation()
+    window.addEventListener('resize', checkOrientation)
+    window.addEventListener('orientationchange', checkOrientation)
+    return () => {
+      window.removeEventListener('resize', checkOrientation)
+      window.removeEventListener('orientationchange', checkOrientation)
+    }
+  }, [])
 
   const allParticipants = [localParticipant, ...participants]
   const participantCount = allParticipants.length
@@ -106,37 +125,114 @@ export function Canvas({
 
       {/* 1:1 layout */}
       {!remoteScreenShare && is1to1 && remoteTile && (
-        <div className="w-full h-full flex items-center justify-center">
-          <div className="w-full h-full">
-            {isAudioOnly || !remoteTile.hasVideoTrack ? (
-              <AudioTile participant={remoteTile} />
-            ) : (
-              <VideoTile participant={remoteTile} />
-            )}
-          </div>
-          <SelfPIP participant={localParticipant} position={pipPosition} />
-        </div>
+        <>
+          {/* Mobile landscape: remote fills left, self video strip on right */}
+          {isMobile && isLandscape ? (
+            <div className="w-full h-full flex">
+              <div className="flex-1 h-full">
+                {isAudioOnly || !remoteTile.hasVideoTrack ? (
+                  <AudioTile participant={remoteTile} />
+                ) : (
+                  <VideoTile participant={remoteTile} />
+                )}
+              </div>
+              {/* Self as landscape sidebar */}
+              <div className="w-32 h-full flex-shrink-0 border-l border-white/10">
+                <div className="w-full h-full bg-slate-900 flex items-center justify-center relative">
+                  {localParticipant.avatar ? (
+                    <img src={localParticipant.avatar} alt={localParticipant.displayName} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center text-xl font-bold text-muted-foreground">
+                      {localParticipant.displayName.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  {!localParticipant.micOn && (
+                    <div className="absolute bottom-1 right-1 bg-black/60 p-1 rounded-full">
+                      <MicOff className="w-3 h-3 text-red-500" />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          ) : (
+            /* Default: remote full screen + PIP */
+            <div className="w-full h-full flex items-center justify-center">
+              <div className="w-full h-full">
+                {isAudioOnly || !remoteTile.hasVideoTrack ? (
+                  <AudioTile participant={remoteTile} />
+                ) : (
+                  <VideoTile participant={remoteTile} allowRotate={!isMobile} />
+                )}
+              </div>
+              <SelfPIP participant={localParticipant} position={pipPosition} isLandscape={isLandscape && !isMobile} />
+            </div>
+          )}
+        </>
       )}
 
       {/* Grid layout for groups */}
       {!remoteScreenShare && !is1to1 && (
-        <div
-          className="w-full h-full grid gap-1 p-1"
-          style={{
-            gridTemplateColumns: `repeat(${layout.cols}, 1fr)`,
-            gridTemplateRows: `repeat(${layout.rows}, 1fr)`,
-          }}
-        >
-          {regularParticipants.map((participant) => (
-            <div key={participant.id} className="w-full h-full min-h-0">
-              {isAudioOnly || !participant.hasVideoTrack ? (
-                <AudioTile participant={participant} />
-              ) : (
-                <VideoTile participant={participant} isLocal={participant.id === localParticipant.id} />
-              )}
+        <>
+          {/* Mobile landscape: local PIP bottom-right, others in grid */}
+          {isMobile && isLandscape ? (
+            <div className="w-full h-full flex">
+              <div
+                className="flex-1 h-full grid gap-1 p-1"
+                style={{
+                  gridTemplateColumns: `repeat(${Math.max(layout.cols - 1, 1)}, 1fr)`,
+                }}
+              >
+                {participants.map((participant) => (
+                  <div key={participant.id} className="w-full h-full min-h-0">
+                    {isAudioOnly || !participant.hasVideoTrack ? (
+                      <AudioTile participant={participant} />
+                    ) : (
+                      <VideoTile participant={participant} />
+                    )}
+                  </div>
+                ))}
+              </div>
+              {/* Self sidebar */}
+              <div className="w-28 h-full flex-shrink-0 border-l border-white/10 bg-slate-900 flex items-center justify-center relative">
+                {localParticipant.avatar ? (
+                  <img src={localParticipant.avatar} alt={localParticipant.displayName} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center text-xl font-bold text-muted-foreground">
+                    {localParticipant.displayName.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                {!localParticipant.micOn && (
+                  <div className="absolute bottom-2 right-2 bg-black/60 p-1 rounded-full">
+                    <MicOff className="w-3 h-3 text-red-500" />
+                  </div>
+                )}
+              </div>
             </div>
-          ))}
-        </div>
+          ) : (
+            /* Desktop / mobile portrait: standard grid */
+            <div
+              className="w-full h-full grid gap-1 p-1"
+              style={{
+                gridTemplateColumns: `repeat(${layout.cols}, 1fr)`,
+                gridTemplateRows: `repeat(${layout.rows}, 1fr)`,
+              }}
+            >
+              {regularParticipants.map((participant) => (
+                <div key={participant.id} className="w-full h-full min-h-0 flex items-center justify-center">
+                  {isAudioOnly || !participant.hasVideoTrack ? (
+                    <AudioTile participant={participant} />
+                  ) : (
+                    <VideoTile
+                      participant={participant}
+                      isLocal={participant.id === localParticipant.id}
+                      allowRotate={!isMobile}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </>
       )}
 
       {/* Empty state */}
