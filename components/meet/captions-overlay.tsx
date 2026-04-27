@@ -9,8 +9,15 @@ interface CaptionsOverlayProps {
   t: TranslationStrings
 }
 
+interface DisplayLine {
+  id: string
+  speakerName: string
+  text: string
+  isFading: boolean
+}
+
 export function CaptionsOverlay({ lines, isEnabled, t }: CaptionsOverlayProps) {
-  const [displayLines, setDisplayLines] = useState<CaptionLine[]>([])
+  const [displayLines, setDisplayLines] = useState<DisplayLine[]>([])
 
   useEffect(() => {
     if (!isEnabled || lines.length === 0) {
@@ -18,15 +25,35 @@ export function CaptionsOverlay({ lines, isEnabled, t }: CaptionsOverlayProps) {
       return
     }
 
-    // Show the last 2-3 lines
-    setDisplayLines(lines.slice(-3))
+    // Show the last 3 lines
+    const recentLines = lines.slice(-3)
+    
+    setDisplayLines(
+      recentLines.map((line) => ({
+        id: line.id,
+        speakerName: line.speakerName,
+        text: line.text,
+        isFading: false,
+      }))
+    )
 
-    // Auto-fade old lines after 6 seconds
-    const timeout = setTimeout(() => {
-      setDisplayLines([])
-    }, 6000)
+    // Schedule fade-out after 6 seconds
+    const timers: NodeJS.Timeout[] = []
+    
+    recentLines.forEach((line) => {
+      const timer = setTimeout(() => {
+        setDisplayLines((prev) =>
+          prev.map((l) =>
+            l.id === line.id ? { ...l, isFading: true } : l
+          )
+        )
+      }, 6000)
+      timers.push(timer)
+    })
 
-    return () => clearTimeout(timeout)
+    return () => {
+      timers.forEach((timer) => clearTimeout(timer))
+    }
   }, [lines, isEnabled])
 
   if (!isEnabled || displayLines.length === 0) {
@@ -34,12 +61,17 @@ export function CaptionsOverlay({ lines, isEnabled, t }: CaptionsOverlayProps) {
   }
 
   return (
-    <div className="absolute bottom-20 left-0 right-0 mx-auto w-full max-w-2xl px-4 z-40">
-      <div className="bg-black/80 backdrop-blur-sm rounded-lg p-3 border border-slate-700">
+    <div className="absolute bottom-20 left-0 right-0 z-40 flex justify-center px-4 pointer-events-none">
+      <div className="max-w-3xl w-full space-y-2">
         {displayLines.map((line) => (
-          <div key={line.id} className="mb-2 last:mb-0">
-            <p className="text-xs font-semibold text-slate-400">{line.speakerName}</p>
-            <p className="text-sm text-white leading-relaxed">{line.text}</p>
+          <div
+            key={line.id}
+            className={`bg-black/80 text-white px-4 py-2 rounded-md text-sm leading-relaxed transition-opacity duration-500 ${
+              line.isFading ? 'opacity-0' : 'opacity-100'
+            }`}
+          >
+            <span className="font-bold">{line.speakerName}:</span>{' '}
+            <span className="font-normal">{line.text}</span>
           </div>
         ))}
       </div>

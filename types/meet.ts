@@ -45,6 +45,15 @@ export interface Meeting {
   isStillActive?: boolean
 }
 
+export interface InternalUser {
+  id: string
+  displayName: string
+  avatar?: string
+  role?: string
+  team?: string
+  isOnline: boolean
+}
+
 export interface OtherParty {
   displayName: string
   hasJoined: boolean

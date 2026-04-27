@@ -11,6 +11,7 @@ interface CanvasProps {
   recordingActive?: boolean
   captionsEnabled?: boolean
   remoteScreenShare?: (ParticipantTile | LocalParticipant) | null
+  screenShareSource?: string | null
 }
 
 export function Canvas({
@@ -20,6 +21,7 @@ export function Canvas({
   recordingActive = false,
   captionsEnabled = false,
   remoteScreenShare = null,
+  screenShareSource = null,
 }: CanvasProps) {
   const [pipPosition, setPipPosition] = useState<'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'>('bottom-right')
 
@@ -52,7 +54,7 @@ export function Canvas({
       {/* Screen share banner */}
       {hasLocalScreenShare && (
         <div className="absolute top-0 left-0 right-0 bg-red-600 text-white px-4 py-2 flex items-center justify-between text-sm font-medium z-50">
-          <span>You&apos;re sharing your screen</span>
+          <span>You&apos;re sharing {screenShareSource || 'your screen'}</span>
           <button className="hover:opacity-80 transition-opacity">Stop sharing</button>
         </div>
       )}

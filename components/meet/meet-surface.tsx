@@ -18,6 +18,7 @@ import type {
   FeedbackSubmission,
   TranslationStrings,
   CaptionLine,
+  InternalUser,
 } from '@/types/meet'
 
 type AppState = 'pre-join' | 'in-meeting' | 'ended'
@@ -35,8 +36,11 @@ interface MeetSurfaceProps {
   participants?: ParticipantTile[]
   tenantBranding: TenantBranding
   availableDevices: AvailableDevices
+  internalUsers?: InternalUser[]
+  meetingLinkUrl?: string
   otherParty?: OtherParty | null
   captionLines?: CaptionLine[]
+  screenShareSource?: string | null
 
   // Callbacks
   onJoin: (params: JoinParams) => void
@@ -172,7 +176,10 @@ export function MeetSurface({
         localParticipant={localParticipant}
         participants={participants}
         availableDevices={availableDevices}
+        internalUsers={internalUsers}
+        meetingLinkUrl={meetingLinkUrl}
         captionLines={captionLines}
+        screenShareSource={screenShareSource}
         onToggleMic={onToggleMic}
         onToggleCamera={onToggleCamera}
         onSwitchMic={onSwitchMic}

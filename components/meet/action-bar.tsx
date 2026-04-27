@@ -2,20 +2,14 @@
 
 import { useState } from 'react'
 import {
-  Mic,
-  MicOff,
-  Video,
-  VideoOff,
   Share2,
-  Users,
-  MessageSquare,
   MoreVertical,
-  LogOut,
-  ChevronDown,
-  Volume2,
-  Settings,
-  Lock,
+  PhoneOff,
   Square,
+  Lock,
+  Settings,
+  Captions,
+  XCircle,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -27,8 +21,12 @@ import {
   DropdownMenuLabel,
 } from '@/components/ui/dropdown-menu'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { SplitButtonControl } from './split-button-control'
+import { AddParticipantPopover } from './add-participant-popover'
+import { SettingsDialog } from './settings-dialog'
+import { RecordingConsentDialog } from './recording-consent-dialog'
 import { EndCallConfirmation } from './end-call-confirmation'
-import type { AvailableDevices, TranslationStrings } from '@/types/meet'
+import type { AvailableDevices, TranslationStrings, InternalUser, Meeting, LocalParticipant } from '@/types/meet'
 
 interface ActionBarProps {
   micOn: boolean
@@ -38,7 +36,12 @@ interface ActionBarProps {
   recordingActive?: boolean
   voiceOnlyLocked?: boolean
   isInitiator?: boolean
+  displayName: string
+  meeting: Meeting
+  localParticipant: LocalParticipant
   availableDevices: AvailableDevices
+  internalUsers: InternalUser[]
+  meetingLinkUrl: string
   onToggleMic: () => void
   onToggleCamera: () => void
   onSwitchMic: (deviceId: string) => void
@@ -46,11 +49,11 @@ interface ActionBarProps {
   onSwitchSpeaker: (deviceId: string) => void
   onStartScreenShare: () => void
   onStopScreenShare: () => void
-  onAddParticipant: () => void
+  onAddInternalParticipant: (userId: string) => void
+  onGenerateGuestLink: (params: { sendVia: 'whatsapp' | 'sms' | 'email' | 'copy' }) => void
   onToggleCaptions: () => void
   onToggleRecording?: () => void
   onToggleVoiceOnlyLock?: () => void
-  onRemoveParticipant?: (participantId: string) => void
   onEndCallForEveryone?: () => void
   onLeave: () => void
   t: TranslationStrings
@@ -64,7 +67,12 @@ export function ActionBar({
   recordingActive = false,
   voiceOnlyLocked = false,
   isInitiator = false,
+  displayName,
+  meeting,
+  localParticipant,
   availableDevices,
+  internalUsers,
+  meetingLinkUrl,
   onToggleMic,
   onToggleCamera,
   onSwitchMic,
@@ -72,7 +80,8 @@ export function ActionBar({
   onSwitchSpeaker,
   onStartScreenShare,
   onStopScreenShare,
-  onAddParticipant,
+  onAddInternalParticipant,
+  onGenerateGuestLink,
   onToggleCaptions,
   onToggleRecording,
   onToggleVoiceOnlyLock,
@@ -80,62 +89,48 @@ export function ActionBar({
   onLeave,
   t,
 }: ActionBarProps) {
-  const [isVisible, setIsVisible] = useState(true)
+  const [showSettingsDialog, setShowSettingsDialog] = useState(false)
   const [showEndCallDialog, setShowEndCallDialog] = useState(false)
+  const [showRecordingConsent, setShowRecordingConsent] = useState(false)
+  const [recordingConsentGiven, setRecordingConsentGiven] = useState(false)
+
+  const handleToggleRecording = () => {
+    if (!recordingActive && !recordingConsentGiven && isInitiator) {
+      setShowRecordingConsent(true)
+    } else {
+      onToggleRecording?.()
+    }
+  }
+
+  const handleConfirmRecording = () => {
+    setShowRecordingConsent(false)
+    setRecordingConsentGiven(true)
+    onToggleRecording?.()
+  }
 
   return (
     <TooltipProvider>
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-black/50 px-4 py-3 flex items-center justify-center gap-2 transition-opacity">
-        {/* Mic control */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant={micOn ? 'default' : 'destructive'}
-              size="icon"
-              className="rounded-full"
-              onClick={onToggleMic}
-            >
-              {micOn ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
-            </Button>
-          </DropdownMenuTrigger>
-          {availableDevices.mics.length > 1 && (
-            <DropdownMenuContent align="center" className="w-48">
-              <DropdownMenuLabel className="text-xs">{t.microphone || 'Microphone'}</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {availableDevices.mics.map((mic) => (
-                <DropdownMenuItem key={mic.id} onClick={() => onSwitchMic(mic.id)}>
-                  {mic.label}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          )}
-        </DropdownMenu>
+      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-black/50 px-4 py-3 flex items-center justify-center gap-3 transition-opacity max-w-3xl mx-auto left-1/2 -translate-x-1/2 w-[calc(100%-2rem)]">
+        {/* Mic split button */}
+        <SplitButtonControl
+          type="mic"
+          isOn={micOn}
+          devices={availableDevices.mics}
+          onToggle={onToggleMic}
+          onSwitchDevice={onSwitchMic}
+          label={t.microphone || 'Microphone'}
+        />
 
-        {/* Camera control */}
+        {/* Camera split button */}
         {!voiceOnlyLocked && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant={cameraOn ? 'default' : 'destructive'}
-                size="icon"
-                className="rounded-full"
-                onClick={onToggleCamera}
-              >
-                {cameraOn ? <Video className="w-5 h-5" /> : <VideoOff className="w-5 h-5" />}
-              </Button>
-            </DropdownMenuTrigger>
-            {availableDevices.cameras.length > 1 && (
-              <DropdownMenuContent align="center" className="w-48">
-                <DropdownMenuLabel className="text-xs">{t.camera || 'Camera'}</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {availableDevices.cameras.map((camera) => (
-                  <DropdownMenuItem key={camera.id} onClick={() => onSwitchCamera(camera.id)}>
-                    {camera.label}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            )}
-          </DropdownMenu>
+          <SplitButtonControl
+            type="camera"
+            isOn={cameraOn}
+            devices={availableDevices.cameras}
+            onToggle={onToggleCamera}
+            onSwitchDevice={onSwitchCamera}
+            label={t.camera || 'Camera'}
+          />
         )}
 
         {/* Screen share */}
@@ -154,19 +149,12 @@ export function ActionBar({
         </Tooltip>
 
         {/* Add participant */}
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="outline"
-              size="icon"
-              className="rounded-full"
-              onClick={onAddParticipant}
-            >
-              <Users className="w-5 h-5" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>{t.add_participant || 'Add participant'}</TooltipContent>
-        </Tooltip>
+        <AddParticipantPopover
+          internalUsers={internalUsers}
+          meetingLinkUrl={meetingLinkUrl}
+          onAddInternalParticipant={onAddInternalParticipant}
+          onGenerateGuestLink={onGenerateGuestLink}
+        />
 
         {/* Captions */}
         <Tooltip>
@@ -177,7 +165,7 @@ export function ActionBar({
               className="rounded-full"
               onClick={onToggleCaptions}
             >
-              <MessageSquare className="w-5 h-5" />
+              <Captions className="w-5 h-5" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>{t.captions || 'Live captions'}</TooltipContent>
@@ -191,27 +179,10 @@ export function ActionBar({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
-            {/* Speaker selection */}
-            {availableDevices.speakers.length > 0 && (
-              <>
-                <DropdownMenuLabel className="text-xs flex items-center gap-2">
-                  <Volume2 className="w-4 h-4" />
-                  {t.speaker || 'Speaker'}
-                </DropdownMenuLabel>
-                {availableDevices.speakers.map((speaker) => (
-                  <DropdownMenuItem key={speaker.id} onClick={() => onSwitchSpeaker(speaker.id)}>
-                    {speaker.label}
-                  </DropdownMenuItem>
-                ))}
-                <DropdownMenuSeparator />
-              </>
-            )}
-
             {/* Initiator controls */}
             {isInitiator && (
               <>
-                <DropdownMenuLabel className="text-xs">{t.host_controls || 'Host Controls'}</DropdownMenuLabel>
-                <DropdownMenuItem onClick={onToggleRecording}>
+                <DropdownMenuItem onClick={handleToggleRecording}>
                   <Square className="w-4 h-4 mr-2" />
                   {recordingActive ? t.stop_recording || 'Stop recording' : t.start_recording || 'Start recording'}
                 </DropdownMenuItem>
@@ -223,14 +194,14 @@ export function ActionBar({
                   onClick={() => setShowEndCallDialog(true)} 
                   className="text-red-600 focus:text-red-600 focus:bg-red-50"
                 >
-                  <LogOut className="w-4 h-4 mr-2" />
+                  <XCircle className="w-4 h-4 mr-2" />
                   {t.end_call_for_all || 'End call for everyone'}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
               </>
             )}
 
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setShowSettingsDialog(true)}>
               <Settings className="w-4 h-4 mr-2" />
               {t.settings || 'Settings'}
             </DropdownMenuItem>
@@ -244,9 +215,31 @@ export function ActionBar({
           className="rounded-full ml-2"
           onClick={onLeave}
         >
-          <LogOut className="w-5 h-5" />
+          <PhoneOff className="w-5 h-5" />
         </Button>
       </div>
+
+      {/* Settings dialog */}
+      <SettingsDialog
+        isOpen={showSettingsDialog}
+        onOpenChange={setShowSettingsDialog}
+        displayName={displayName}
+        meeting={meeting}
+        availableDevices={availableDevices}
+        localParticipant={localParticipant}
+        onSwitchMic={onSwitchMic}
+        onSwitchCamera={onSwitchCamera}
+        onSwitchSpeaker={onSwitchSpeaker}
+        onToggleCaptions={onToggleCaptions}
+        t={t}
+      />
+
+      {/* Recording consent dialog */}
+      <RecordingConsentDialog
+        isOpen={showRecordingConsent}
+        onConfirm={handleConfirmRecording}
+        onCancel={() => setShowRecordingConsent(false)}
+      />
 
       {/* End call confirmation */}
       {isInitiator && onEndCallForEveryone && (
@@ -263,3 +256,4 @@ export function ActionBar({
     </TooltipProvider>
   )
 }
+

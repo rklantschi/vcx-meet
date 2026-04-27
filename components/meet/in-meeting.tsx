@@ -12,6 +12,7 @@ import type {
   TranslationStrings,
   GenerateGuestLinkParams,
   CaptionLine,
+  InternalUser,
 } from '@/types/meet'
 
 interface InMeetingProps {
@@ -19,7 +20,10 @@ interface InMeetingProps {
   localParticipant: LocalParticipant
   participants: ParticipantTile[]
   availableDevices: AvailableDevices
+  internalUsers?: InternalUser[]
+  meetingLinkUrl?: string
   captionLines?: CaptionLine[]
+  screenShareSource?: string | null
   onToggleMic: () => void
   onToggleCamera: () => void
   onSwitchMic: (deviceId: string) => void
@@ -43,7 +47,10 @@ export function InMeeting({
   localParticipant,
   participants,
   availableDevices,
+  internalUsers = [],
+  meetingLinkUrl = '',
   captionLines = [],
+  screenShareSource = null,
   onToggleMic,
   onToggleCamera,
   onSwitchMic,
@@ -110,6 +117,7 @@ export function InMeeting({
         recordingActive={meeting.recordingActive}
         captionsEnabled={localParticipant.captionsOn}
         remoteScreenShare={screenShareParticipant}
+        screenShareSource={screenShareSource}
       />
 
       {/* Captions overlay */}
@@ -131,7 +139,12 @@ export function InMeeting({
           recordingActive={meeting.recordingActive}
           voiceOnlyLocked={meeting.voiceOnlyLocked}
           isInitiator={localParticipant.isInitiator}
+          displayName={localParticipant.displayName}
+          meeting={meeting}
+          localParticipant={localParticipant}
           availableDevices={availableDevices}
+          internalUsers={internalUsers}
+          meetingLinkUrl={meetingLinkUrl}
           onToggleMic={onToggleMic}
           onToggleCamera={onToggleCamera}
           onSwitchMic={onSwitchMic}
@@ -139,9 +152,8 @@ export function InMeeting({
           onSwitchSpeaker={onSwitchSpeaker}
           onStartScreenShare={onStartScreenShare}
           onStopScreenShare={onStopScreenShare}
-          onAddParticipant={() => {
-            // Opens add participant modal/panel
-          }}
+          onAddInternalParticipant={onAddInternalParticipant}
+          onGenerateGuestLink={onGenerateGuestLink}
           onToggleCaptions={onToggleCaptions}
           onToggleRecording={onToggleRecording}
           onToggleVoiceOnlyLock={onToggleVoiceOnlyLock}
