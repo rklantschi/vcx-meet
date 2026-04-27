@@ -110,113 +110,134 @@ export function ActionBar({
 
   return (
     <TooltipProvider>
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-black/50 px-4 py-3 flex items-center justify-center gap-3 transition-opacity max-w-3xl mx-auto left-1/2 -translate-x-1/2 w-[calc(100%-2rem)]">
-        {/* Mic split button */}
-        <SplitButtonControl
-          type="mic"
-          isOn={micOn}
-          devices={availableDevices.mics}
-          onToggle={onToggleMic}
-          onSwitchDevice={onSwitchMic}
-          label={t.microphone || 'Microphone'}
-        />
-
-        {/* Camera split button */}
-        {!voiceOnlyLocked && (
+      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-black/50 px-3 py-3 sm:px-4 flex items-center justify-between sm:justify-center gap-2 sm:gap-3">
+        {/* Always-visible core controls */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Mic split button */}
           <SplitButtonControl
-            type="camera"
-            isOn={cameraOn}
-            devices={availableDevices.cameras}
-            onToggle={onToggleCamera}
-            onSwitchDevice={onSwitchCamera}
-            label={t.camera || 'Camera'}
+            type="mic"
+            isOn={micOn}
+            devices={availableDevices.mics}
+            onToggle={onToggleMic}
+            onSwitchDevice={onSwitchMic}
+            label={t.microphone || 'Microphone'}
           />
-        )}
 
-        {/* Screen share */}
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant={sharingScreen ? 'default' : 'outline'}
-              size="icon"
-              className="rounded-full"
-              onClick={sharingScreen ? onStopScreenShare : onStartScreenShare}
-            >
-              <Share2 className="w-5 h-5" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>{t.screen_share || 'Share screen'}</TooltipContent>
-        </Tooltip>
+          {/* Camera split button */}
+          {!voiceOnlyLocked && (
+            <SplitButtonControl
+              type="camera"
+              isOn={cameraOn}
+              devices={availableDevices.cameras}
+              onToggle={onToggleCamera}
+              onSwitchDevice={onSwitchCamera}
+              label={t.camera || 'Camera'}
+            />
+          )}
+        </div>
 
-        {/* Add participant */}
-        <AddParticipantPopover
-          internalUsers={internalUsers}
-          meetingLinkUrl={meetingLinkUrl}
-          onAddInternalParticipant={onAddInternalParticipant}
-          onGenerateGuestLink={onGenerateGuestLink}
-        />
+        {/* Secondary controls — hidden on mobile, shown on sm+ */}
+        <div className="hidden sm:flex items-center gap-3">
+          {/* Screen share */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant={sharingScreen ? 'default' : 'outline'}
+                size="icon"
+                className="rounded-full"
+                onClick={sharingScreen ? onStopScreenShare : onStartScreenShare}
+              >
+                <Share2 className="w-5 h-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>{t.screen_share || 'Share screen'}</TooltipContent>
+          </Tooltip>
 
-        {/* Captions */}
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant={captionsOn ? 'default' : 'outline'}
-              size="icon"
-              className="rounded-full"
-              onClick={onToggleCaptions}
-            >
-              <Captions className="w-5 h-5" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>{t.captions || 'Live captions'}</TooltipContent>
-        </Tooltip>
+          {/* Add participant */}
+          <AddParticipantPopover
+            internalUsers={internalUsers}
+            meetingLinkUrl={meetingLinkUrl}
+            onAddInternalParticipant={onAddInternalParticipant}
+            onGenerateGuestLink={onGenerateGuestLink}
+          />
 
-        {/* More menu */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="icon" className="rounded-full">
-              <MoreVertical className="w-5 h-5" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            {/* Initiator controls */}
-            {isInitiator && (
-              <>
-                <DropdownMenuItem onClick={handleToggleRecording}>
-                  <Square className="w-4 h-4 mr-2" />
-                  {recordingActive ? t.stop_recording || 'Stop recording' : t.start_recording || 'Start recording'}
+          {/* Captions */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant={captionsOn ? 'default' : 'outline'}
+                size="icon"
+                className="rounded-full"
+                onClick={onToggleCaptions}
+              >
+                <Captions className="w-5 h-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>{t.captions || 'Live captions'}</TooltipContent>
+          </Tooltip>
+        </div>
+
+        {/* More menu — always visible; on mobile also includes secondary controls */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon" className="rounded-full">
+                <MoreVertical className="w-5 h-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" side="top" className="w-56">
+              {/* Mobile-only secondary controls */}
+              <div className="sm:hidden">
+                <DropdownMenuItem onClick={sharingScreen ? onStopScreenShare : onStartScreenShare}>
+                  <Share2 className="w-4 h-4 mr-2" />
+                  {sharingScreen ? t.stop_sharing || 'Stop sharing' : t.screen_share || 'Share screen'}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={onToggleVoiceOnlyLock}>
-                  <Lock className="w-4 h-4 mr-2" />
-                  {voiceOnlyLocked ? t.allow_video || 'Allow video' : t.voice_only || 'Voice only'}
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => setShowEndCallDialog(true)} 
-                  className="text-red-600 focus:text-red-600 focus:bg-red-50"
-                >
-                  <XCircle className="w-4 h-4 mr-2" />
-                  {t.end_call_for_all || 'End call for everyone'}
+                <DropdownMenuItem onClick={onToggleCaptions}>
+                  <Captions className="w-4 h-4 mr-2" />
+                  {captionsOn ? t.hide_captions || 'Hide captions' : t.captions || 'Live captions'}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-              </>
-            )}
+              </div>
 
-            <DropdownMenuItem onClick={() => setShowSettingsDialog(true)}>
-              <Settings className="w-4 h-4 mr-2" />
-              {t.settings || 'Settings'}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              {/* Initiator controls */}
+              {isInitiator && (
+                <>
+                  <DropdownMenuItem onClick={handleToggleRecording}>
+                    <Square className="w-4 h-4 mr-2" />
+                    {recordingActive ? t.stop_recording || 'Stop recording' : t.start_recording || 'Start recording'}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={onToggleVoiceOnlyLock}>
+                    <Lock className="w-4 h-4 mr-2" />
+                    {voiceOnlyLocked ? t.allow_video || 'Allow video' : t.voice_only || 'Voice only'}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => setShowEndCallDialog(true)}
+                    className="text-red-600 focus:text-red-600 focus:bg-red-50"
+                  >
+                    <XCircle className="w-4 h-4 mr-2" />
+                    {t.end_call_for_all || 'End call for everyone'}
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                </>
+              )}
 
-        {/* Leave button */}
-        <Button
-          variant="destructive"
-          size="icon"
-          className="rounded-full ml-2"
-          onClick={onLeave}
-        >
-          <PhoneOff className="w-5 h-5" />
-        </Button>
+              <DropdownMenuItem onClick={() => setShowSettingsDialog(true)}>
+                <Settings className="w-4 h-4 mr-2" />
+                {t.settings || 'Settings'}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Leave button */}
+          <Button
+            variant="destructive"
+            size="icon"
+            className="rounded-full"
+            onClick={onLeave}
+          >
+            <PhoneOff className="w-5 h-5" />
+          </Button>
+        </div>
       </div>
 
       {/* Settings dialog */}
