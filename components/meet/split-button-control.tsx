@@ -1,6 +1,6 @@
 'use client'
 
-import { Mic, MicOff, Video, VideoOff, ChevronUp, Volume2 } from 'lucide-react'
+import { Mic, MicOff, Video, VideoOff, ChevronUp, Volume2, VolumeX } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -32,10 +32,10 @@ export function SplitButtonControl({
   const Icon =
     type === 'mic' ? (isOn ? Mic : MicOff) :
     type === 'camera' ? (isOn ? Video : VideoOff) :
-    Volume2
+    isOn ? Volume2 : VolumeX
 
   const hasMultipleDevices = devices.length > 1
-  const canToggle = type !== 'speaker' && !!onToggle
+  const canToggle = !!onToggle
 
   return (
     <div className="flex items-center rounded-full overflow-hidden bg-slate-700 hover:bg-slate-600 transition-colors">

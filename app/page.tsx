@@ -72,6 +72,7 @@ export default function MeetPage() {
   const [captionLines, setCaptionLines] = useState<CaptionLine[]>([])
   const [micOn, setMicOn] = useState(true)
   const [cameraOn, setCameraOn] = useState(true)
+  const [speakerOn, setSpeakerOn] = useState(true)
   const [controlsMinimized, setControlsMinimized] = useState(false)
   const [micVolume, setMicVolume] = useState(80)
   const [speakerVolume, setSpeakerVolume] = useState(80)
@@ -101,6 +102,7 @@ export default function MeetPage() {
     isInitiator,
     micOn,
     cameraOn,
+    speakerOn,
     sharingScreen,
     captionsOn,
     connectionQuality: 'excellent' as const,
@@ -258,6 +260,10 @@ export default function MeetPage() {
         onToggleCamera={() => {
           console.log('[Demo] Toggle camera')
           setCameraOn(!cameraOn)
+        }}
+        onToggleSpeaker={() => {
+          console.log('[Demo] Toggle speaker')
+          setSpeakerOn(!speakerOn)
         }}
         onSwitchMic={(id) => console.log('[Demo] Switch mic:', id)}
         onSwitchCamera={(id) => console.log('[Demo] Switch camera:', id)}

@@ -50,6 +50,7 @@ interface MeetSurfaceProps {
   onSendNudge: () => void
   onToggleMic?: () => void
   onToggleCamera?: () => void
+  onToggleSpeaker?: () => void
   onSwitchMic?: (deviceId: string) => void
   onSwitchCamera?: (deviceId: string) => void
   onSwitchSpeaker?: (deviceId: string) => void
@@ -195,6 +196,7 @@ export function MeetSurface({
         speakerVolume={speakerVolume}
         onToggleMic={onToggleMic}
         onToggleCamera={onToggleCamera}
+        onToggleSpeaker={onToggleSpeaker}
         onSwitchMic={onSwitchMic}
         onSwitchCamera={onSwitchCamera}
         onSwitchSpeaker={onSwitchSpeaker}

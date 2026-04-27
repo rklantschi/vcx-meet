@@ -67,6 +67,7 @@ export interface LocalParticipant {
   isInitiator: boolean
   micOn: boolean
   cameraOn: boolean
+  speakerOn?: boolean
   sharingScreen: boolean
   captionsOn: boolean
   connectionQuality: 'excellent' | 'good' | 'fair' | 'poor'

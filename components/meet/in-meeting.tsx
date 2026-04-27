@@ -28,6 +28,7 @@ interface InMeetingProps {
   speakerVolume?: number
   onToggleMic: () => void
   onToggleCamera: () => void
+  onToggleSpeaker?: () => void
   onSwitchMic: (deviceId: string) => void
   onSwitchCamera: (deviceId: string) => void
   onSwitchSpeaker: (deviceId: string) => void
@@ -59,6 +60,7 @@ export function InMeeting({
   speakerVolume = 80,
   onToggleMic,
   onToggleCamera,
+  onToggleSpeaker,
   onSwitchMic,
   onSwitchCamera,
   onSwitchSpeaker,
@@ -142,6 +144,7 @@ export function InMeeting({
         <ActionBar
           micOn={localParticipant.micOn}
           cameraOn={localParticipant.cameraOn}
+          speakerOn={localParticipant.speakerOn}
           sharingScreen={localParticipant.sharingScreen}
           captionsOn={localParticipant.captionsOn}
           recordingActive={meeting.recordingActive}
@@ -157,6 +160,7 @@ export function InMeeting({
           speakerVolume={speakerVolume}
           onToggleMic={onToggleMic}
           onToggleCamera={onToggleCamera}
+          onToggleSpeaker={onToggleSpeaker}
           onSwitchMic={onSwitchMic}
           onSwitchCamera={onSwitchCamera}
           onSwitchSpeaker={onSwitchSpeaker}

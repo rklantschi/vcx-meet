@@ -32,6 +32,7 @@ import type { AvailableDevices, TranslationStrings, InternalUser, Meeting, Local
 interface ActionBarProps {
   micOn: boolean
   cameraOn: boolean
+  speakerOn?: boolean
   sharingScreen: boolean
   captionsOn: boolean
   recordingActive?: boolean
@@ -47,6 +48,7 @@ interface ActionBarProps {
   speakerVolume?: number
   onToggleMic: () => void
   onToggleCamera: () => void
+  onToggleSpeaker?: () => void
   onSwitchMic: (deviceId: string) => void
   onSwitchCamera: (deviceId: string) => void
   onSwitchSpeaker: (deviceId: string) => void
@@ -67,6 +69,7 @@ interface ActionBarProps {
 export function ActionBar({
   micOn,
   cameraOn,
+  speakerOn = true,
   sharingScreen,
   captionsOn,
   recordingActive = false,
@@ -82,6 +85,7 @@ export function ActionBar({
   speakerVolume = 80,
   onToggleMic,
   onToggleCamera,
+  onToggleSpeaker,
   onSwitchMic,
   onSwitchCamera,
   onSwitchSpeaker,
@@ -144,6 +148,16 @@ export function ActionBar({
               label={t.camera || 'Camera'}
             />
           )}
+
+          {/* Speaker split button */}
+          <SplitButtonControl
+            type="speaker"
+            isOn={speakerOn}
+            devices={availableDevices.speakers}
+            onToggle={onToggleSpeaker}
+            onSwitchDevice={onSwitchSpeaker}
+            label={t.speaker || 'Speaker'}
+          />
         </div>
 
         {/* Secondary controls — hidden on mobile, shown on sm+ */}
