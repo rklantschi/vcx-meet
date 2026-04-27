@@ -141,6 +141,7 @@ export function InMeeting({
           onToggleCaptions={onToggleCaptions}
           onToggleRecording={onToggleRecording}
           onToggleVoiceOnlyLock={onToggleVoiceOnlyLock}
+          onEndCallForEveryone={onEndCallForEveryone}
           onLeave={onLeave}
           t={t}
         />

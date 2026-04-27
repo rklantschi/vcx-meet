@@ -61,6 +61,10 @@ export interface LocalParticipant {
   sharingScreen: boolean
   captionsOn: boolean
   connectionQuality: 'excellent' | 'good' | 'fair' | 'poor'
+  // Required for tile compatibility
+  hasVideoTrack: boolean
+  hasAudioTrack: boolean
+  isSpeaking?: boolean
 }
 
 export interface ParticipantTile {

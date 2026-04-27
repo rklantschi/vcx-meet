@@ -1,6 +1,6 @@
 'use client'
 
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import type { TranslationStrings } from '@/types/meet'
 
 interface EndCallConfirmationProps {
@@ -17,7 +17,7 @@ export function EndCallConfirmation({
   t,
 }: EndCallConfirmationProps) {
   return (
-    <AlertDialog open={isOpen}>
+    <AlertDialog open={isOpen} onOpenChange={(open) => !open && onCancel()}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{t.end_call_for_all || 'End call for everyone?'}</AlertDialogTitle>
@@ -25,14 +25,14 @@ export function EndCallConfirmation({
             {t.end_call_confirmation || 'This will disconnect all participants from the call. This action cannot be undone.'}
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <div className="flex gap-2">
+        <AlertDialogFooter>
           <AlertDialogCancel onClick={onCancel}>
             {t.cancel || 'Cancel'}
           </AlertDialogCancel>
           <AlertDialogAction onClick={onConfirm} className="bg-red-600 hover:bg-red-700">
             {t.end_call || 'End call'}
           </AlertDialogAction>
-        </div>
+        </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   )

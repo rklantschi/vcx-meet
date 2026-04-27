@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { Mic, MicOff, Video, VideoOff, ChevronDown, AlertCircle } from 'lucide-react'
+import { Mic, MicOff, Video, VideoOff, ChevronDown, AlertCircle, Volume2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -253,7 +253,7 @@ export function PreJoin({
 
           {/* Speaker select */}
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 text-muted-foreground">🔊</div>
+            <Volume2 className="w-4 h-4 text-muted-foreground" />
             <Select value={speakerId} onValueChange={setSpeakerId}>
               <SelectTrigger className="flex-1">
                 <SelectValue />

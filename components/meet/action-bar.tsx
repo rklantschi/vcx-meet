@@ -76,6 +76,7 @@ export function ActionBar({
   onToggleCaptions,
   onToggleRecording,
   onToggleVoiceOnlyLock,
+  onEndCallForEveryone,
   onLeave,
   t,
 }: ActionBarProps) {
@@ -248,12 +249,12 @@ export function ActionBar({
       </div>
 
       {/* End call confirmation */}
-      {isInitiator && (
+      {isInitiator && onEndCallForEveryone && (
         <EndCallConfirmation
           isOpen={showEndCallDialog}
           onConfirm={() => {
             setShowEndCallDialog(false)
-            // Call the actual end call handler
+            onEndCallForEveryone()
           }}
           onCancel={() => setShowEndCallDialog(false)}
           t={t}

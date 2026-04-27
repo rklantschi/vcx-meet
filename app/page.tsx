@@ -41,6 +41,7 @@ export default function MeetPage() {
     avatar: '',
     hasVideoTrack: true,
     hasAudioTrack: true,
+    isSpeaking: false,
   }
 
   const demoParticipants = [
@@ -94,7 +95,7 @@ export default function MeetPage() {
   ]
 
   const demoTenantBranding = {
-    logoUrl: '/logo.png',
+    logoUrl: '',
     accentColor: '#FF6B35',
     supportLinkUrl: 'https://support.vortex-cx.com',
   }

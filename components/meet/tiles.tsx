@@ -1,7 +1,10 @@
 'use client'
 
 import { Mic, MicOff, Phone } from 'lucide-react'
-import type { ParticipantTile } from '@/types/meet'
+import type { ParticipantTile, LocalParticipant } from '@/types/meet'
+
+// Shared type for tiles that can render either local or remote participants
+type TileParticipant = ParticipantTile | LocalParticipant
 
 interface VideoTileProps {
   participant: ParticipantTile
@@ -126,7 +129,7 @@ export function AudioTile({ participant }: AudioTileProps) {
 }
 
 interface SelfPIPProps {
-  participant: ParticipantTile
+  participant: TileParticipant
   position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'
   onDragStart?: (e: React.MouseEvent) => void
 }

@@ -10,7 +10,7 @@ interface CanvasProps {
   isAudioOnly?: boolean
   recordingActive?: boolean
   captionsEnabled?: boolean
-  remoteScreenShare?: ParticipantTile | null
+  remoteScreenShare?: (ParticipantTile | LocalParticipant) | null
 }
 
 export function Canvas({
