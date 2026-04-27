@@ -126,7 +126,7 @@ export function Canvas({
       )}
 
       {/* Recording + captions + connection quality + layout toggle */}
-      <div className="absolute top-4 right-4 flex items-center gap-2 z-40">
+      <div className="absolute top-4 right-4 flex items-center gap-2 z-50">
         {/* Layout toggle (only show for 3+ participants) */}
         {participantCount >= 3 && !remoteScreenShare && (
           <button
