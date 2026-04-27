@@ -62,11 +62,11 @@ export function CaptionsOverlay({ lines, isEnabled, t }: CaptionsOverlayProps) {
 
   return (
     <div className="absolute bottom-0 left-0 right-0 z-40 flex justify-center px-2 sm:px-4 pointer-events-none pb-20 sm:pb-24">
-      <div className="max-w-sm sm:max-w-3xl w-full space-y-2">
+      <div className="max-w-sm sm:max-w-3xl w-full space-y-1">
         {displayLines.map((line) => (
           <div
             key={line.id}
-            className={`bg-black/80 text-white px-3 py-2 sm:px-4 sm:py-2 rounded-md text-xs sm:text-sm leading-relaxed transition-opacity duration-500 ${
+            className={`bg-black/80 text-white px-3 py-1 sm:px-4 sm:py-1.5 rounded-md text-xs sm:text-sm leading-snug transition-opacity duration-500 ${
               line.isFading ? 'opacity-0' : 'opacity-100'
             }`}
           >
