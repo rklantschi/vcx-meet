@@ -77,6 +77,8 @@ export default function MeetPage() {
   const [controlsMinimized, setControlsMinimized] = useState(false)
   const [micVolume, setMicVolume] = useState(80)
   const [speakerVolume, setSpeakerVolume] = useState(80)
+  const [showSidePanelToggle, setShowSidePanelToggle] = useState(false)
+  const [sidePanelCollapsed, setSidePanelCollapsed] = useState(false)
 
   // Meeting data
   const demoMeeting = {
@@ -337,6 +339,12 @@ export default function MeetPage() {
           setMicOn(true)
           setCameraOn(true)
         }}
+        onToggleSidePanel={() => {
+          console.log('[Demo] Toggle side panel')
+          setSidePanelCollapsed(!sidePanelCollapsed)
+        }}
+        showSidePanelToggle={showSidePanelToggle}
+        sidePanelCollapsed={sidePanelCollapsed}
         t={{}}
       />
 
@@ -519,6 +527,33 @@ export default function MeetPage() {
           />
           <span>Is Initiator</span>
         </label>
+
+        {/* Side panel controls (in-meeting only) */}
+        {appState === 'in-meeting' && (
+          <div className="space-y-1 pt-2 border-t border-slate-700">
+            <div className="font-semibold text-slate-300">Side Panel:</div>
+            <label className="flex items-center gap-2 cursor-pointer hover:bg-slate-800 p-1 rounded">
+              <input
+                type="checkbox"
+                checked={showSidePanelToggle}
+                onChange={(e) => setShowSidePanelToggle(e.target.checked)}
+                className="w-3 h-3"
+              />
+              <span>Show toggle button</span>
+            </label>
+            {showSidePanelToggle && (
+              <label className="flex items-center gap-2 cursor-pointer hover:bg-slate-800 p-1 rounded">
+                <input
+                  type="checkbox"
+                  checked={sidePanelCollapsed}
+                  onChange={(e) => setSidePanelCollapsed(e.target.checked)}
+                  className="w-3 h-3"
+                />
+                <span>Collapsed</span>
+              </label>
+            )}
+          </div>
+        )}
         </div>}
       </div>
     </div>
