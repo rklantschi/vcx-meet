@@ -409,7 +409,7 @@ export function PreJoin({
         )}
 
         {/* Join buttons */}
-        <div className="w-full flex gap-3 pt-4">
+        <div className="w-full flex gap-3">
           <Button
             onClick={() => handleJoinClick('voice')}
             disabled={isJoinDisabled || isLoading}
@@ -429,13 +429,13 @@ export function PreJoin({
         </div>
 
         {/* Cancel */}
-        <Button onClick={onCancel} variant="ghost" className="w-full">
+        <Button onClick={onCancel} variant="ghost" className="w-full -mt-2">
           {t.cancel || 'Cancel'}
         </Button>
 
         {/* Powered by footer - mobile */}
         {localUser.isGuest && (
-          <div className="text-xs text-muted-foreground pt-4">
+          <div className="text-xs text-muted-foreground">
             {t.powered_by || 'Powered by Vortex CX'}
           </div>
         )}
@@ -721,7 +721,7 @@ export function PreJoin({
           </div>
 
           {/* Join buttons */}
-          <div className="flex gap-3 pt-4">
+          <div className="flex gap-3">
             <Button
               onClick={() => handleJoinClick('voice')}
               disabled={isJoinDisabled || isLoading}
@@ -741,7 +741,7 @@ export function PreJoin({
           </div>
 
           {/* Cancel */}
-          <Button onClick={onCancel} variant="ghost">
+          <Button onClick={onCancel} variant="ghost" className="-mt-2">
             {t.cancel || 'Cancel'}
           </Button>
         </div>
