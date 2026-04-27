@@ -543,8 +543,6 @@ export function PreJoin({
           )}
         </div>
       </div>
-
-      {/* Footer end */}
     </div>
   )
 }
