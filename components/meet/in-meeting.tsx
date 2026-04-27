@@ -24,6 +24,8 @@ interface InMeetingProps {
   meetingLinkUrl?: string
   captionLines?: CaptionLine[]
   screenShareSource?: string | null
+  micVolume?: number
+  speakerVolume?: number
   onToggleMic: () => void
   onToggleCamera: () => void
   onSwitchMic: (deviceId: string) => void
@@ -38,6 +40,8 @@ interface InMeetingProps {
   onToggleVoiceOnlyLock?: () => void
   onRemoveParticipant?: (participantId: string) => void
   onEndCallForEveryone?: () => void
+  onMicVolumeChange?: (volume: number) => void
+  onSpeakerVolumeChange?: (volume: number) => void
   onLeave: () => void
   t: TranslationStrings
 }
@@ -51,6 +55,8 @@ export function InMeeting({
   meetingLinkUrl = '',
   captionLines = [],
   screenShareSource = null,
+  micVolume = 80,
+  speakerVolume = 80,
   onToggleMic,
   onToggleCamera,
   onSwitchMic,
@@ -65,6 +71,8 @@ export function InMeeting({
   onToggleVoiceOnlyLock,
   onRemoveParticipant,
   onEndCallForEveryone,
+  onMicVolumeChange,
+  onSpeakerVolumeChange,
   onLeave,
   t,
 }: InMeetingProps) {
@@ -145,6 +153,8 @@ export function InMeeting({
           availableDevices={availableDevices}
           internalUsers={internalUsers}
           meetingLinkUrl={meetingLinkUrl}
+          micVolume={micVolume}
+          speakerVolume={speakerVolume}
           onToggleMic={onToggleMic}
           onToggleCamera={onToggleCamera}
           onSwitchMic={onSwitchMic}
@@ -158,6 +168,8 @@ export function InMeeting({
           onToggleRecording={onToggleRecording}
           onToggleVoiceOnlyLock={onToggleVoiceOnlyLock}
           onEndCallForEveryone={onEndCallForEveryone}
+          onMicVolumeChange={onMicVolumeChange}
+          onSpeakerVolumeChange={onSpeakerVolumeChange}
           onLeave={onLeave}
           t={t}
         />

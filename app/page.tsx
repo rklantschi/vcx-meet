@@ -73,6 +73,8 @@ export default function MeetPage() {
   const [micOn, setMicOn] = useState(true)
   const [cameraOn, setCameraOn] = useState(true)
   const [controlsMinimized, setControlsMinimized] = useState(false)
+  const [micVolume, setMicVolume] = useState(80)
+  const [speakerVolume, setSpeakerVolume] = useState(80)
 
   // Meeting data
   const demoMeeting = {
@@ -235,6 +237,8 @@ export default function MeetPage() {
         otherParty={appState === 'pre-join' && meetingState === 'waiting-for-other' ? demoOtherParty : undefined}
         captionLines={captionLines}
         screenShareSource={sharingScreen ? 'Entire Screen' : null}
+        micVolume={micVolume}
+        speakerVolume={speakerVolume}
         onJoin={(params) => {
           console.log('[Demo] Join with:', params)
           setAppState('in-meeting')
@@ -294,6 +298,14 @@ export default function MeetPage() {
           console.log('[Demo] Leave')
           setAppState('ended')
           setEndedReason('left')
+        }}
+        onMicVolumeChange={(volume) => {
+          console.log('[Demo] Mic volume:', volume)
+          setMicVolume(volume)
+        }}
+        onSpeakerVolumeChange={(volume) => {
+          console.log('[Demo] Speaker volume:', volume)
+          setSpeakerVolume(volume)
         }}
         onRejoin={() => {
           console.log('[Demo] Rejoin')

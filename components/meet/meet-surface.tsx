@@ -41,6 +41,8 @@ interface MeetSurfaceProps {
   otherParty?: OtherParty | null
   captionLines?: CaptionLine[]
   screenShareSource?: string | null
+  micVolume?: number
+  speakerVolume?: number
 
   // Callbacks
   onJoin: (params: JoinParams) => void
@@ -60,6 +62,8 @@ interface MeetSurfaceProps {
   onToggleVoiceOnlyLock?: () => void
   onRemoveParticipant?: (participantId: string) => void
   onEndCallForEveryone?: () => void
+  onMicVolumeChange?: (volume: number) => void
+  onSpeakerVolumeChange?: (volume: number) => void
   onLeave?: () => void
   onRejoin?: () => void
   onSubmitFeedback?: (feedback: FeedbackSubmission) => void
@@ -87,6 +91,8 @@ export function MeetSurface({
   otherParty,
   captionLines = [],
   screenShareSource = null,
+  micVolume = 80,
+  speakerVolume = 80,
   onJoin,
   onCancel,
   onSendNudge,
@@ -104,6 +110,8 @@ export function MeetSurface({
   onToggleVoiceOnlyLock = () => {},
   onRemoveParticipant = () => {},
   onEndCallForEveryone = () => {},
+  onMicVolumeChange = () => {},
+  onSpeakerVolumeChange = () => {},
   onLeave = () => {},
   onRejoin,
   onSubmitFeedback = () => {},
@@ -183,6 +191,8 @@ export function MeetSurface({
         meetingLinkUrl={meetingLinkUrl}
         captionLines={captionLines}
         screenShareSource={screenShareSource}
+        micVolume={micVolume}
+        speakerVolume={speakerVolume}
         onToggleMic={onToggleMic}
         onToggleCamera={onToggleCamera}
         onSwitchMic={onSwitchMic}
@@ -197,6 +207,8 @@ export function MeetSurface({
         onToggleVoiceOnlyLock={onToggleVoiceOnlyLock}
         onRemoveParticipant={onRemoveParticipant}
         onEndCallForEveryone={onEndCallForEveryone}
+        onMicVolumeChange={onMicVolumeChange}
+        onSpeakerVolumeChange={onSpeakerVolumeChange}
         onLeave={onLeave}
         t={translations}
       />

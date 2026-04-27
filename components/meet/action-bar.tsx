@@ -42,6 +42,8 @@ interface ActionBarProps {
   availableDevices: AvailableDevices
   internalUsers: InternalUser[]
   meetingLinkUrl: string
+  micVolume?: number
+  speakerVolume?: number
   onToggleMic: () => void
   onToggleCamera: () => void
   onSwitchMic: (deviceId: string) => void
@@ -55,6 +57,8 @@ interface ActionBarProps {
   onToggleRecording?: () => void
   onToggleVoiceOnlyLock?: () => void
   onEndCallForEveryone?: () => void
+  onMicVolumeChange?: (volume: number) => void
+  onSpeakerVolumeChange?: (volume: number) => void
   onLeave: () => void
   t: TranslationStrings
 }
@@ -73,6 +77,8 @@ export function ActionBar({
   availableDevices,
   internalUsers,
   meetingLinkUrl,
+  micVolume = 80,
+  speakerVolume = 80,
   onToggleMic,
   onToggleCamera,
   onSwitchMic,
@@ -86,6 +92,8 @@ export function ActionBar({
   onToggleRecording,
   onToggleVoiceOnlyLock,
   onEndCallForEveryone,
+  onMicVolumeChange,
+  onSpeakerVolumeChange,
   onLeave,
   t,
 }: ActionBarProps) {
@@ -248,10 +256,14 @@ export function ActionBar({
         meeting={meeting}
         availableDevices={availableDevices}
         localParticipant={localParticipant}
+        micVolume={micVolume}
+        speakerVolume={speakerVolume}
         onSwitchMic={onSwitchMic}
         onSwitchCamera={onSwitchCamera}
         onSwitchSpeaker={onSwitchSpeaker}
         onToggleCaptions={onToggleCaptions}
+        onMicVolumeChange={onMicVolumeChange}
+        onSpeakerVolumeChange={onSpeakerVolumeChange}
         t={t}
       />
 

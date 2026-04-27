@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
+import { Slider } from '@/components/ui/slider'
 import type { AvailableDevices, LocalParticipant, Meeting, TranslationStrings } from '@/types/meet'
 
 interface SettingsDialogProps {
@@ -26,10 +27,14 @@ interface SettingsDialogProps {
   meeting: Meeting
   availableDevices: AvailableDevices
   localParticipant: LocalParticipant
+  micVolume?: number
+  speakerVolume?: number
   onSwitchMic: (deviceId: string) => void
   onSwitchCamera: (deviceId: string) => void
   onSwitchSpeaker: (deviceId: string) => void
   onToggleCaptions: () => void
+  onMicVolumeChange?: (volume: number) => void
+  onSpeakerVolumeChange?: (volume: number) => void
   t: TranslationStrings
 }
 
@@ -40,10 +45,14 @@ export function SettingsDialog({
   meeting,
   availableDevices,
   localParticipant,
+  micVolume = 80,
+  speakerVolume = 80,
   onSwitchMic,
   onSwitchCamera,
   onSwitchSpeaker,
   onToggleCaptions,
+  onMicVolumeChange,
+  onSpeakerVolumeChange,
   t,
 }: SettingsDialogProps) {
   return (
@@ -150,6 +159,47 @@ export function SettingsDialog({
               id="captions-toggle"
               checked={localParticipant.captionsOn}
               onCheckedChange={onToggleCaptions}
+            />
+          </div>
+
+          {/* Divider */}
+          <div className="h-px bg-border" />
+
+          {/* Microphone Volume */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="mic-volume" className="text-sm">
+                {t.microphone_volume || 'Microphone volume'}
+              </Label>
+              <span className="text-xs text-muted-foreground">{micVolume}%</span>
+            </div>
+            <Slider
+              id="mic-volume"
+              min={0}
+              max={100}
+              step={1}
+              value={[micVolume]}
+              onValueChange={(value) => onMicVolumeChange?.(value[0])}
+              className="w-full"
+            />
+          </div>
+
+          {/* Speaker Volume */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="speaker-volume" className="text-sm">
+                {t.speaker_volume || 'Speaker volume'}
+              </Label>
+              <span className="text-xs text-muted-foreground">{speakerVolume}%</span>
+            </div>
+            <Slider
+              id="speaker-volume"
+              min={0}
+              max={100}
+              step={1}
+              value={[speakerVolume]}
+              onValueChange={(value) => onSpeakerVolumeChange?.(value[0])}
+              className="w-full"
             />
           </div>
         </div>
