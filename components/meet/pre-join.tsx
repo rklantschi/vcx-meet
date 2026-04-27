@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { Mic, MicOff, Video, VideoOff, ChevronDown, AlertCircle, Volume2 } from 'lucide-react'
+import { Mic, MicOff, Video, VideoOff, ChevronDown, AlertCircle, Volume2, Play } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -57,8 +57,11 @@ export function PreJoin({
   const [micEnabled, setMicEnabled] = useState(true)
   const [cameraEnabled, setCameraEnabled] = useState(true)
   const [sendingNudge, setSendingNudge] = useState(false)
+  const [micLevel, setMicLevel] = useState(0)
+  const [isTestingSpeaker, setIsTestingSpeaker] = useState(false)
 
   const videoPreviewRef = useRef<HTMLVideoElement>(null)
+  const micAnimationRef = useRef<number | null>(null)
 
   // Simulate camera preview
   useEffect(() => {
@@ -67,6 +70,37 @@ export function PreJoin({
       videoPreviewRef.current.style.backgroundColor = 'rgba(0,0,0,0.1)'
     }
   }, [cameraEnabled])
+
+  // Simulate mic level animation when mic is enabled
+  useEffect(() => {
+    if (micEnabled) {
+      const animateMicLevel = () => {
+        // Simulate varying mic levels (in real app, use AudioContext analyser)
+        const baseLevel = 20 + Math.random() * 30
+        const variation = Math.sin(Date.now() / 200) * 15
+        setMicLevel(Math.min(100, Math.max(0, baseLevel + variation)))
+        micAnimationRef.current = requestAnimationFrame(animateMicLevel)
+      }
+      micAnimationRef.current = requestAnimationFrame(animateMicLevel)
+      return () => {
+        if (micAnimationRef.current) {
+          cancelAnimationFrame(micAnimationRef.current)
+        }
+      }
+    } else {
+      setMicLevel(0)
+    }
+  }, [micEnabled])
+
+  // Test speaker function
+  const handleTestSpeaker = () => {
+    setIsTestingSpeaker(true)
+    // In real app, play a test audio file
+    // For demo, just show the button as active for 2 seconds
+    setTimeout(() => {
+      setIsTestingSpeaker(false)
+    }, 2000)
+  }
 
   const handleJoinClick = (mode: 'voice' | 'video') => {
     if (!displayName.trim()) return
@@ -105,17 +139,28 @@ export function PreJoin({
       {/* Mobile layout (< md) */}
       <div className="md:hidden w-full max-w-md flex flex-col items-center gap-6">
         {/* Camera preview */}
-        <div className="w-24 h-24 rounded-full bg-muted border-2 border-border overflow-hidden flex items-center justify-center">
+        <div className="w-32 h-32 rounded-2xl bg-muted border-2 border-border overflow-hidden flex items-center justify-center relative">
           {cameraEnabled ? (
-            <video
-              ref={videoPreviewRef}
-              className="w-full h-full object-cover"
-              autoPlay
-              muted
-              playsInline
-            />
+            <div className="w-full h-full relative">
+              <video
+                ref={videoPreviewRef}
+                className="w-full h-full object-cover"
+                autoPlay
+                muted
+                playsInline
+              />
+              {/* Simulated camera preview overlay */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
+                <div className="text-3xl font-bold text-foreground/80">
+                  {displayName.charAt(0).toUpperCase() || '?'}
+                </div>
+              </div>
+              {/* Camera active indicator */}
+              <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+            </div>
           ) : (
             <div className="flex flex-col items-center justify-center w-full h-full bg-muted">
+              <VideoOff className="w-8 h-8 text-muted-foreground mb-1" />
               <div className="text-2xl font-bold text-muted-foreground">
                 {displayName.charAt(0).toUpperCase() || '?'}
               </div>
@@ -172,12 +217,27 @@ export function PreJoin({
         <div className="w-full space-y-2">
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <span>{t.microphone_level || 'Microphone level'}</span>
-            <span>—</span>
+            <span>{micEnabled ? `${Math.round(micLevel)}%` : t.muted || 'Muted'}</span>
           </div>
-          <div className="h-1 bg-muted rounded-full overflow-hidden">
-            <div className="h-full w-1/2 bg-accent rounded-full" />
+          <div className="h-2 bg-muted rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-accent rounded-full transition-all duration-75"
+              style={{ width: `${micLevel}%` }}
+            />
           </div>
         </div>
+
+        {/* Test speaker button */}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleTestSpeaker}
+          disabled={isTestingSpeaker}
+          className="w-full"
+        >
+          <Play className="w-4 h-4 mr-2" />
+          {isTestingSpeaker ? (t.playing_test_sound || 'Playing...') : (t.test_speaker || 'Test speaker')}
+        </Button>
 
         {/* Device controls */}
         <div className="w-full flex gap-2 justify-center">
@@ -314,20 +374,35 @@ export function PreJoin({
           )}
 
           {/* Large camera preview */}
-          <div className="w-80 h-80 rounded-2xl bg-muted border-4 border-border overflow-hidden flex items-center justify-center">
+          <div className="w-80 h-80 rounded-2xl bg-muted border-4 border-border overflow-hidden flex items-center justify-center relative">
             {cameraEnabled ? (
-              <video
-                ref={videoPreviewRef}
-                className="w-full h-full object-cover"
-                autoPlay
-                muted
-                playsInline
-              />
+              <div className="w-full h-full relative">
+                <video
+                  ref={videoPreviewRef}
+                  className="w-full h-full object-cover"
+                  autoPlay
+                  muted
+                  playsInline
+                />
+                {/* Simulated camera preview overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
+                  <div className="text-7xl font-bold text-foreground/80">
+                    {displayName.charAt(0).toUpperCase() || '?'}
+                  </div>
+                </div>
+                {/* Camera active indicator */}
+                <div className="absolute top-3 right-3 flex items-center gap-2 bg-black/50 px-2 py-1 rounded-full">
+                  <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                  <span className="text-xs text-white">{t.camera_on || 'Camera on'}</span>
+                </div>
+              </div>
             ) : (
-              <div className="flex flex-col items-center justify-center w-full h-full bg-muted">
+              <div className="flex flex-col items-center justify-center w-full h-full bg-muted gap-2">
+                <VideoOff className="w-12 h-12 text-muted-foreground" />
                 <div className="text-6xl font-bold text-muted-foreground">
                   {displayName.charAt(0).toUpperCase() || '?'}
                 </div>
+                <span className="text-sm text-muted-foreground">{t.camera_off || 'Camera off'}</span>
               </div>
             )}
           </div>
@@ -336,12 +411,27 @@ export function PreJoin({
           <div className="w-80 space-y-2">
             <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span>{t.microphone_level || 'Microphone level'}</span>
-              <span>—</span>
+              <span>{micEnabled ? `${Math.round(micLevel)}%` : t.muted || 'Muted'}</span>
             </div>
             <div className="h-2 bg-muted rounded-full overflow-hidden">
-              <div className="h-full w-1/2 bg-accent rounded-full" />
+              <div 
+                className="h-full bg-accent rounded-full transition-all duration-75"
+                style={{ width: `${micLevel}%` }}
+              />
             </div>
           </div>
+
+          {/* Test speaker button */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleTestSpeaker}
+            disabled={isTestingSpeaker}
+            className="w-80"
+          >
+            <Play className="w-4 h-4 mr-2" />
+            {isTestingSpeaker ? (t.playing_test_sound || 'Playing...') : (t.test_speaker || 'Test speaker')}
+          </Button>
 
           {/* Device controls */}
           <div className="flex gap-3">
