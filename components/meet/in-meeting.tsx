@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Canvas } from './canvas'
 import { ActionBar } from './action-bar'
 import { CaptionsOverlay } from './captions-overlay'
@@ -62,28 +62,32 @@ export function InMeeting({
   t,
 }: InMeetingProps) {
   const [actionBarVisible, setActionBarVisible] = useState(true)
-  const [hideActionBarTimeout, setHideActionBarTimeout] = useState<NodeJS.Timeout | null>(null)
+  const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  // Auto-hide action bar
-  useEffect(() => {
-    if (hideActionBarTimeout) {
-      clearTimeout(hideActionBarTimeout)
+  // Reset auto-hide timer
+  const resetHideTimer = useCallback(() => {
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current)
     }
-
-    const timeout = setTimeout(() => {
+    hideTimeoutRef.current = setTimeout(() => {
       setActionBarVisible(false)
     }, 3000)
+  }, [])
 
-    setHideActionBarTimeout(timeout)
-
+  // Start timer on mount, cleanup on unmount
+  useEffect(() => {
+    resetHideTimer()
     return () => {
-      if (timeout) clearTimeout(timeout)
+      if (hideTimeoutRef.current) {
+        clearTimeout(hideTimeoutRef.current)
+      }
     }
-  }, [actionBarVisible])
+  }, [resetHideTimer])
 
-  const handleCanvasInteraction = () => {
+  const handleCanvasInteraction = useCallback(() => {
     setActionBarVisible(true)
-  }
+    resetHideTimer()
+  }, [resetHideTimer])
 
   // Get screen share participant if any
   const screenShareParticipant = participants.find((p) => p.sharingScreen) || 
