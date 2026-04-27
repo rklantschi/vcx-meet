@@ -58,10 +58,11 @@ export function PreJoin({
   const [cameraEnabled, setCameraEnabled] = useState(true)
   const [sendingNudge, setSendingNudge] = useState(false)
   const [micLevel, setMicLevel] = useState(0)
-  const [isTestingSpeaker, setIsTestingSpeaker] = useState(false)
+  const [testState, setTestState] = useState<'idle' | 'recording' | 'recorded' | 'playing'>('idle')
 
   const videoPreviewRef = useRef<HTMLVideoElement>(null)
   const micAnimationRef = useRef<number | null>(null)
+  const testRecordingTimerRef = useRef<NodeJS.Timeout | null>(null)
 
   // Simulate camera preview
   useEffect(() => {
@@ -92,14 +93,30 @@ export function PreJoin({
     }
   }, [micEnabled])
 
-  // Test speaker function
-  const handleTestSpeaker = () => {
-    setIsTestingSpeaker(true)
-    // In real app, play a test audio file
-    // For demo, just show the button as active for 2 seconds
-    setTimeout(() => {
-      setIsTestingSpeaker(false)
-    }, 2000)
+  // Test mic/speaker functions
+  const handleStartRecording = () => {
+    setTestState('recording')
+    // In real app, start MediaRecorder to capture audio
+    // For demo, record for 3 seconds then stop
+    testRecordingTimerRef.current = setTimeout(() => {
+      setTestState('recorded')
+    }, 3000)
+  }
+
+  const handlePlayRecording = () => {
+    setTestState('playing')
+    // In real app, play the recorded audio blob
+    // For demo, play for 3 seconds then reset
+    testRecordingTimerRef.current = setTimeout(() => {
+      setTestState('idle')
+    }, 3000)
+  }
+
+  const handleCancelTest = () => {
+    if (testRecordingTimerRef.current) {
+      clearTimeout(testRecordingTimerRef.current)
+    }
+    setTestState('idle')
   }
 
   const handleJoinClick = (mode: 'voice' | 'video') => {
@@ -128,7 +145,7 @@ export function PreJoin({
   const scheduledStartTime = meeting.scheduledStart ? new Date(meeting.scheduledStart).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : null
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center bg-background p-4">
+    <div className="h-screen flex flex-col items-center bg-background p-4 overflow-y-auto">
       {/* Logo - mobile only */}
       {tenantBranding.logoUrl && (
         <div className="absolute top-6 left-6 md:hidden">
@@ -137,7 +154,7 @@ export function PreJoin({
       )}
 
       {/* Mobile layout (< md) */}
-      <div className="md:hidden w-full max-w-md flex flex-col items-center gap-6">
+      <div className="md:hidden w-full max-w-md flex flex-col items-center gap-6 my-auto py-6">
         {/* Camera preview */}
         <div className="w-32 h-32 rounded-2xl bg-muted border-2 border-border overflow-hidden flex items-center justify-center relative">
           {cameraEnabled ? (
@@ -227,17 +244,72 @@ export function PreJoin({
           </div>
         </div>
 
-        {/* Test speaker button */}
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleTestSpeaker}
-          disabled={isTestingSpeaker}
-          className="w-full"
-        >
-          <Play className="w-4 h-4 mr-2" />
-          {isTestingSpeaker ? (t.playing_test_sound || 'Playing...') : (t.test_speaker || 'Test speaker')}
-        </Button>
+        {/* Test mic/speaker buttons */}
+        <div className="w-full flex gap-2">
+          {testState === 'idle' && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleStartRecording}
+              disabled={!micEnabled}
+              className="flex-1"
+            >
+              <Mic className="w-4 h-4 mr-2" />
+              {t.test_mic || 'Test mic'}
+            </Button>
+          )}
+          {testState === 'recording' && (
+            <>
+              <Button
+                variant="destructive"
+                size="sm"
+                className="flex-1"
+                disabled
+              >
+                <span className="w-2 h-2 rounded-full bg-white animate-pulse mr-2" />
+                {t.recording || 'Recording...'}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCancelTest}
+              >
+                {t.cancel || 'Cancel'}
+              </Button>
+            </>
+          )}
+          {testState === 'recorded' && (
+            <>
+              <Button
+                variant="default"
+                size="sm"
+                onClick={handlePlayRecording}
+                className="flex-1"
+              >
+                <Play className="w-4 h-4 mr-2" />
+                {t.play_recording || 'Play recording'}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCancelTest}
+              >
+                {t.discard || 'Discard'}
+              </Button>
+            </>
+          )}
+          {testState === 'playing' && (
+            <Button
+              variant="secondary"
+              size="sm"
+              className="flex-1"
+              disabled
+            >
+              <Volume2 className="w-4 h-4 mr-2 animate-pulse" />
+              {t.playing || 'Playing...'}
+            </Button>
+          )}
+        </div>
 
         {/* Device controls */}
         <div className="w-full flex gap-2 justify-center">
@@ -360,6 +432,13 @@ export function PreJoin({
         <Button onClick={onCancel} variant="ghost" className="w-full">
           {t.cancel || 'Cancel'}
         </Button>
+
+        {/* Powered by footer - mobile */}
+        {localUser.isGuest && (
+          <div className="text-xs text-muted-foreground pt-4">
+            {t.powered_by || 'Powered by Vortex CX'}
+          </div>
+        )}
       </div>
 
       {/* Desktop layout (md+) */}
@@ -421,17 +500,72 @@ export function PreJoin({
             </div>
           </div>
 
-          {/* Test speaker button */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleTestSpeaker}
-            disabled={isTestingSpeaker}
-            className="w-80"
-          >
-            <Play className="w-4 h-4 mr-2" />
-            {isTestingSpeaker ? (t.playing_test_sound || 'Playing...') : (t.test_speaker || 'Test speaker')}
-          </Button>
+          {/* Test mic/speaker buttons */}
+          <div className="w-80 flex gap-2">
+            {testState === 'idle' && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleStartRecording}
+                disabled={!micEnabled}
+                className="flex-1"
+              >
+                <Mic className="w-4 h-4 mr-2" />
+                {t.test_mic || 'Test mic'}
+              </Button>
+            )}
+            {testState === 'recording' && (
+              <>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  className="flex-1"
+                  disabled
+                >
+                  <span className="w-2 h-2 rounded-full bg-white animate-pulse mr-2" />
+                  {t.recording || 'Recording...'}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCancelTest}
+                >
+                  {t.cancel || 'Cancel'}
+                </Button>
+              </>
+            )}
+            {testState === 'recorded' && (
+              <>
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={handlePlayRecording}
+                  className="flex-1"
+                >
+                  <Play className="w-4 h-4 mr-2" />
+                  {t.play_recording || 'Play recording'}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCancelTest}
+                >
+                  {t.discard || 'Discard'}
+                </Button>
+              </>
+            )}
+            {testState === 'playing' && (
+              <Button
+                variant="secondary"
+                size="sm"
+                className="flex-1"
+                disabled
+              >
+                <Volume2 className="w-4 h-4 mr-2 animate-pulse" />
+                {t.playing || 'Playing...'}
+              </Button>
+            )}
+          </div>
 
           {/* Device controls */}
           <div className="flex gap-3">
@@ -613,9 +747,9 @@ export function PreJoin({
         </div>
       </div>
 
-      {/* Tenant branding footer */}
+      {/* Tenant branding footer - desktop only */}
       {localUser.isGuest && (
-        <div className="absolute bottom-6 text-xs text-muted-foreground">
+        <div className="hidden md:block absolute bottom-6 text-xs text-muted-foreground">
           {t.powered_by || 'Powered by Vortex CX'}
         </div>
       )}
