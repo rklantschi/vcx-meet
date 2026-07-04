@@ -18,6 +18,7 @@ import {
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
+import { AiRuneBadge } from '@/brand-kit'
 import type { AvailableDevices, LocalParticipant, Meeting, TranslationStrings } from '@/types/meet'
 
 interface SettingsDialogProps {
@@ -152,7 +153,8 @@ export function SettingsDialog({
 
           {/* Live captions */}
           <div className="flex items-center justify-between">
-            <Label htmlFor="captions-toggle" className="text-sm cursor-pointer">
+            <Label htmlFor="captions-toggle" className="text-sm cursor-pointer flex items-center gap-2">
+              <AiRuneBadge size={18} runeSize={11} aria-label="AI" />
               {t.live_captions || 'Live captions'}
             </Label>
             <Switch

@@ -143,7 +143,7 @@ export function MeetSurface({
     join_voice: 'Join voice',
     join_video: 'Join video',
     cancel: 'Cancel',
-    powered_by: 'Powered by Vortex CX',
+    powered_by: 'Powered by CEMPilot',
     screen_share: 'Share screen',
     add_participant: 'Add participant',
     captions: 'Live captions',

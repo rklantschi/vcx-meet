@@ -2,6 +2,7 @@
 
 import { MessageSquare, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { CemPilotLogo } from '@/brand-kit'
 import type { Meeting, TenantBranding, MeetingEndReason, TranslationStrings } from '@/types/meet'
 
 interface EndedStateProps {
@@ -53,12 +54,14 @@ export function EndedState({
 
   return (
     <div className="relative h-screen flex flex-col items-center justify-center bg-background p-4 gap-8">
-      {/* Logo */}
-      {tenantBranding.logoUrl && (
-        <div className="absolute top-6 left-6">
+      {/* Logo — tenant white-label if present, otherwise CEMPilot */}
+      <div className="absolute top-6 left-6">
+        {tenantBranding.logoUrl ? (
           <img src={tenantBranding.logoUrl} alt="Tenant logo" className="h-8" />
-        </div>
-      )}
+        ) : (
+          <CemPilotLogo size="sm" />
+        )}
+      </div>
 
       {/* Main content */}
       <div className="w-full max-w-md flex flex-col items-center gap-6 text-center">

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { AlertCircle, Volume2, Play, Mic, VideoOff, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react'
+import { CemPilotLogo } from '@/brand-kit'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -196,12 +197,14 @@ export function PreJoin({
 
   return (
     <div className="relative h-screen flex flex-col items-center bg-background p-4 overflow-y-auto">
-      {/* Logo - mobile only */}
-      {tenantBranding.logoUrl && (
-        <div className="absolute top-6 left-6 md:hidden">
+      {/* Logo - mobile only: tenant white-label if present, otherwise CEMPilot */}
+      <div className="absolute top-6 left-6 md:hidden">
+        {tenantBranding.logoUrl ? (
           <img src={tenantBranding.logoUrl} alt="Tenant logo" className="h-8" />
-        </div>
-      )}
+        ) : (
+          <CemPilotLogo size="sm" />
+        )}
+      </div>
 
       {/* Mobile layout (< md) */}
       <div className="md:hidden w-full max-w-md flex flex-col items-center gap-3 my-auto py-4">
@@ -420,8 +423,9 @@ export function PreJoin({
 
         {/* Tenant branding footer */}
         {localUser.isGuest && (
-          <div className="text-xs text-muted-foreground">
-            {t.powered_by || 'Powered by Vortex CX'}
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-xs text-muted-foreground">{t.powered_by || 'Powered by CEMPilot'}</span>
+            <CemPilotLogo size="sm" />
           </div>
         )}
       </div>
@@ -555,9 +559,11 @@ export function PreJoin({
 
         {/* RIGHT: Sidebar — meeting info + join */}
         <div className="w-96 bg-muted/30 border-l border-border flex flex-col p-8 gap-8 justify-center">
-          {/* Logo */}
-          {tenantBranding.logoUrl && (
+          {/* Logo — tenant white-label if present, otherwise CEMPilot */}
+          {tenantBranding.logoUrl ? (
             <img src={tenantBranding.logoUrl} alt="Tenant logo" className="h-10" />
+          ) : (
+            <CemPilotLogo size="lg" />
           )}
 
           {/* Meeting info */}
@@ -612,8 +618,9 @@ export function PreJoin({
 
           {/* Powered by */}
           {localUser.isGuest && (
-            <div className="text-xs text-muted-foreground text-center pt-4 border-t border-border/50">
-              {t.powered_by || 'Powered by Vortex CX'}
+            <div className="flex flex-col items-center gap-2 pt-4 border-t border-border/50">
+              <span className="text-xs text-muted-foreground">{t.powered_by || 'Powered by CEMPilot'}</span>
+              <CemPilotLogo size="sm" />
             </div>
           )}
         </div>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { AiRuneBadge } from '@/brand-kit'
 import type { CaptionLine, TranslationStrings } from '@/types/meet'
 
 interface CaptionsOverlayProps {
@@ -64,6 +65,10 @@ export function CaptionsOverlay({ lines, isEnabled, t }: CaptionsOverlayProps) {
     <div className="absolute bottom-0 left-0 right-0 z-40 flex justify-center px-2 sm:px-4 pointer-events-none pb-20 sm:pb-24">
       <div className="max-w-sm sm:max-w-3xl w-full">
         <div className="bg-black/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-xs sm:text-sm leading-relaxed space-y-1">
+          <div className="flex items-center gap-1.5 mb-1 text-[10px] uppercase tracking-wide text-white/70">
+            <AiRuneBadge size={16} runeSize={10} aria-label="AI" />
+            <span>{t.live_captions || 'Live captions'}</span>
+          </div>
           {displayLines.map((line) => (
             <div
               key={line.id}
