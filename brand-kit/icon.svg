@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40" role="img" aria-label="CEMPilot">
+  <defs>
+    <linearGradient id="cemp-favicon" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#12324f"/>
+      <stop offset="1" stop-color="#0a1c30"/>
+    </linearGradient>
+  </defs>
+  <rect width="40" height="40" rx="10" fill="url(#cemp-favicon)"/>
+  <g stroke="#c7a861" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M13.5 9 V31"/>
+    <path d="M13.5 11.5 L27 18"/>
+    <path d="M13.5 20.5 L27 27"/>
+  </g>
+  <g fill="#c7a861">
+    <circle cx="27" cy="18" r="2.1"/>
+    <circle cx="27" cy="27" r="2.1"/>
+  </g>
+</svg>

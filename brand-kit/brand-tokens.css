@@ -1,0 +1,43 @@
+/* CEMPilot brand tokens — CANONICAL (source of truth: mplus-platform/brand-kit).
+ *
+ * Anchored to the platform accent hue 207 (the app's --primary). Any color
+ * conflict resolves toward the platform, never the website.
+ *
+ * Paste these variables into a consuming project's globals.css (inside :root
+ * and .dark). The brand-kit components read them with hardcoded fallbacks, so
+ * they render correctly even if this file is skipped — but adding it lets the
+ * mark follow the project's theme and dark mode.
+ *
+ * Tailwind v4: also expose them as utilities in your @theme block, e.g.
+ *   --color-brand: var(--brand);
+ *   --color-brand-accent: var(--brand-accent);
+ *   --color-brand-gold: var(--brand-gold);
+ *   ...etc.
+ *
+ * COLOR ROLES
+ *   --brand / --brand-dark  = the navy logo-badge gradient (identity only)
+ *   --brand-gold            = the brass rune on the logo badge (IDENTITY ONLY —
+ *                             never a UI/interactive color; forbidden in-app)
+ *   --brand-accent          = the app accent = platform --primary (207). The
+ *                             interactive blue AND the in-app AI-mark circle.
+ *   --brand-wordmark        = the "Pilot" half of the wordmark (= --brand-accent)
+ *   --brand-foreground      = white (badge border + white logo variant)
+ */
+
+:root {
+  --brand: hsl(207, 62%, 19%);        /* badge base (navy) */
+  --brand-dark: hsl(207, 66%, 11%);   /* badge gradient end */
+  --brand-foreground: hsl(0, 0%, 100%);
+  --brand-gold: hsl(42, 48%, 58%);    /* logo rune — refined brass (identity only) */
+  --brand-accent: hsl(207, 89%, 50%); /* = platform --primary; app accent + AI badge */
+  --brand-wordmark: hsl(207, 89%, 50%); /* "Pilot" wordmark accent */
+}
+
+.dark {
+  --brand: hsl(207, 55%, 24%);
+  --brand-dark: hsl(207, 60%, 14%);
+  --brand-foreground: hsl(0, 0%, 100%);
+  --brand-gold: hsl(42, 50%, 62%);
+  --brand-accent: hsl(207, 89%, 62%);
+  --brand-wordmark: hsl(207, 89%, 62%);
+}
